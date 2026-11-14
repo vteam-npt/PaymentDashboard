@@ -1,0 +1,1806 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#9db4e3">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="SalesFlow">
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="icon" href="./icon-192.png" sizes="192x192" type="image/png">
+  <link rel="apple-touch-icon" href="./icon-192.png">
+  <meta name="description" content="SalesFlow สำหรับบันทึกยอดขายและจัดการตารางค่าคอมมิชชัน">
+  <title>SalesFlow | Sales Workspace</title>
+  <style>
+    :root{color-scheme:light;--text:#5d6b86;--muted:#97a1b6;--line:rgba(255,255,255,.34);--blue:#486fbd;--soft:#edf2ff;--green:#70988d;--panel:rgba(246,247,253,.63);--shadow:0 22px 62px rgba(58,88,147,.10)}
+    *{box-sizing:border-box}
+    html,body{margin:0;min-height:100%;font-family:Inter,"Noto Sans Thai","Sarabun",system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased}
+    body{background:linear-gradient(127deg,#8ca6df 0%,#a2b7e6 49%,#9cafde 100%);color:var(--text)}
+    body::before{content:"";position:fixed;inset:0;pointer-events:none;background:radial-gradient(ellipse at 75% 37%,rgba(243,244,255,.32),transparent 47%),radial-gradient(ellipse at 14% 76%,rgba(234,241,255,.27),transparent 50%)}
+    button,input,select{font:inherit}
+    button{cursor:pointer;-webkit-tap-highlight-color:transparent}
+    button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid #6289da;outline-offset:3px}
+    .app{position:relative;width:min(100%,1140px);margin:0 auto;padding:38px 28px calc(112px + env(safe-area-inset-bottom,0px));min-height:100dvh}
+    .glass-panel{background:var(--panel);border:1px solid rgba(255,255,255,.75);box-shadow:var(--shadow),inset 0 1px rgba(255,255,255,.29);backdrop-filter:blur(30px) saturate(1.22);-webkit-backdrop-filter:blur(30px) saturate(1.22);border-radius:27px;min-height:calc(100dvh - 132px);padding:23px 16px 25px}
+    .view{display:none;animation:rise .27s ease both}.view.active{display:block}@keyframes rise{from{opacity:.6;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+    .toolbar{display:flex;align-items:center;gap:18px;justify-content:space-between;min-height:84px;padding:0 16px;margin-bottom:24px}
+    .search{display:flex;align-items:center;gap:14px;min-width:0;flex:1;color:#8897b4}
+    .search svg{flex:none}
+    .search input{border:0;background:transparent;outline:0;width:100%;min-width:0;font-size:15px;color:#63718c}
+    .search input::placeholder{color:#818ba1;opacity:1}
+    .export{border:1px solid rgba(255,255,255,.6);border-radius:18px;min-height:68px;padding:0 20px;background:rgba(255,255,255,.65);color:#76839e;display:flex;align-items:center;gap:13px;white-space:nowrap;box-shadow:0 4px 15px rgba(109,127,169,.025);transition:transform .2s,background .2s}
+    .export:active,.primary-btn:active{transform:scale(.98)}.export:hover{background:rgba(255,255,255,.82)}
+    .sale-table{width:100%}
+    .table-head,.sale-row{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(0,1fr) minmax(0,1fr) minmax(0,.82fr) minmax(0,.95fr);column-gap:10px;align-items:center}
+    .table-head{min-height:70px;background:rgba(255,255,255,.29);padding:0 15px;font-size:13.6px;color:#939fb5;white-space:nowrap}
+    .sale-row{min-height:111px;padding:14px 15px;border-bottom:1px solid rgba(255,255,255,.16);transition:background .2s}
+    .sale-row:hover{background:rgba(255,255,255,.15)}.sale-row:last-child{border-bottom:0}
+    .model-name{font-size:15.5px;font-weight:700;line-height:1.35;letter-spacing:.05px;color:#5c6884;overflow-wrap:anywhere}
+    .date{margin-top:7px;color:#9ca6b8;font-size:12.2px;white-space:nowrap}
+    .number,.payment{font-size:14.4px;white-space:nowrap}.number{font-variant-numeric:tabular-nums;font-weight:500}.commission{color:#74829d}
+    .pill{display:inline-flex;align-items:center;justify-content:center;white-space:nowrap;padding:9px 12px;border-radius:99px;background:rgba(235,249,242,.74);color:#76998f;font-size:12px;font-weight:500}
+    .empty{padding:65px 20px;text-align:center;color:#8a98af;line-height:1.8}
+    .footnote{margin:24px 18px 3px;color:#93a0b6;font-size:12px}
+    .bottom-nav{position:fixed;bottom:0;left:0;right:0;height:calc(110px + env(safe-area-inset-bottom,0px));padding:6px 10px calc(12px + env(safe-area-inset-bottom,0px));display:flex;align-items:stretch;z-index:20;background:rgba(247,249,255,.92);border-top:1px solid rgba(255,255,255,.93);box-shadow:0 -10px 35px rgba(78,106,169,.03);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
+    .bottom-nav-inner{width:min(100%,1080px);margin:auto;display:grid;grid-template-columns:repeat(3,1fr);gap:8px;height:100%}
+    .nav-btn{border:0;background:transparent;color:#8c95a9;border-radius:19px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:5px;font-size:12px;transition:background .22s,color .22s}
+    .nav-btn.active{background:rgba(220,231,254,.63);color:var(--blue);font-weight:700}
+    .nav-btn svg{width:27px;height:27px;stroke-width:1.85}
+    .section-head{padding:15px 18px 19px}.section-head h1{font-size:23px;line-height:1.35;margin:0 0 5px;color:#5b6985;letter-spacing:-.3px}.section-head p{color:#92a0b6;margin:0;font-size:13px}
+    .form-card,.mini-card,.chart-card{background:rgba(255,255,255,.31);border:1px solid rgba(255,255,255,.5);border-radius:21px}
+    .form-card{padding:22px;margin:0 9px}.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}.field{display:flex;flex-direction:column;gap:7px;min-width:0}.field.full{grid-column:1/-1}.field label,.pay-label{font-size:13px;font-weight:600;color:#7887a0}
+    .field input,.field select{width:100%;min-height:48px;background:rgba(255,255,255,.64);border:1px solid rgba(255,255,255,.84);border-radius:13px;padding:0 14px;color:#5e6d86;font-size:14px;outline:0}
+    .field input:focus,.field select:focus{border-color:rgba(92,132,201,.66)}.field input[readonly]{background:rgba(232,238,253,.52)}
+    .payment-choices{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:9px}.payment-choice{min-width:0;border:1px solid rgba(255,255,255,.72);border-radius:17px;background:rgba(255,255,255,.46);padding:13px 4px;color:#8290a8;display:flex;flex-direction:column;align-items:center;gap:8px;font-size:12px}.payment-choice svg{width:24px;height:24px}.payment-choice[aria-pressed=true]{background:rgba(215,228,253,.9);border-color:#a6bee9;color:#456fbb;box-shadow:0 0 0 1px rgba(113,151,218,.12)}
+    .primary-btn{border:0;border-radius:16px;min-height:51px;padding:0 20px;background:#6688c9;color:white;font-weight:600;font-size:14px;box-shadow:0 8px 18px rgba(92,127,193,.21);transition:transform .2s,background .2s}.primary-btn:hover{background:#5379c3}.button-row{display:flex;gap:10px;align-items:center;margin-top:23px}.light-btn{border:1px solid #ffffffad;color:#7f90aa;background:#ffffff73;min-height:51px;padding:0 20px;border-radius:15px}
+    .stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;padding:0 9px}.mini-card{padding:22px 18px;min-width:0}.stat-label{color:#8e9bb1;font-size:12px;margin-bottom:14px}.stat-value{font-size:clamp(18px,3vw,28px);font-weight:750;color:#5c7094;letter-spacing:-.5px;white-space:nowrap}.stat-sub{font-size:11px;color:#9aa7bd;margin-top:9px}
+    .chart-card{margin:13px 9px 0;padding:21px}.card-title{margin:0 0 15px;font-size:15px;color:#667692}.progress-wrap{height:13px;overflow:hidden;background:rgba(217,229,250,.63);border-radius:999px}.progress-fill{height:100%;width:0;background:linear-gradient(90deg,#80a9e6,#6285c6);border-radius:999px;transition:width .45s}.progress-note{display:flex;justify-content:space-between;font-size:12px;color:#8898b1;margin-top:12px;gap:10px}.channel-list{display:grid;gap:12px}.channel{display:grid;grid-template-columns:95px 1fr 35px;gap:12px;align-items:center;font-size:13px;color:#7c8ba4}.channel-track{background:#dbe6f4;height:9px;border-radius:999px;overflow:hidden}.channel-bar{height:100%;border-radius:999px;background:#8cabe2}.channel:nth-child(2) .channel-bar{background:#93b4b8}.channel:nth-child(3) .channel-bar{background:#b3a6d8}
+    .toast{position:fixed;bottom:calc(124px + env(safe-area-inset-bottom,0px));left:50%;transform:translate(-50%,10px);background:rgba(77,101,148,.94);color:#fff;border-radius:14px;padding:12px 19px;font-size:13px;box-shadow:0 12px 32px #536e9a44;opacity:0;pointer-events:none;z-index:50;transition:opacity .2s,transform .2s;max-width:90vw;text-align:center}.toast.show{opacity:1;transform:translate(-50%,0)}
+    @media(max-width:690px){.app{padding:24px 14px calc(104px + env(safe-area-inset-bottom,0px))}.glass-panel{border-radius:24px;padding:14px 8px;min-height:calc(100dvh - 122px)}.toolbar{gap:8px;padding:0 10px;min-height:76px;margin-bottom:15px}.search{gap:9px}.search input{font-size:13px}.search svg{width:21px}.export{min-height:52px;padding:0 11px;gap:7px;border-radius:14px;font-size:12px}.export svg{width:20px;height:20px}.table-head,.sale-row{grid-template-columns:minmax(0,1.7fr) minmax(0,1fr) minmax(0,1fr) minmax(0,.83fr) minmax(0,.91fr);column-gap:5px;padding-left:9px;padding-right:9px}.table-head{font-size:clamp(9px,1.8vw,12px);min-height:54px}.sale-row{min-height:99px}.model-name{font-size:clamp(10px,2.3vw,14px)}.date{font-size:clamp(8px,1.65vw,11px)}.number,.payment{font-size:clamp(9px,2.1vw,13px)}.pill{font-size:clamp(8px,1.65vw,11px);padding:7px 6px}.bottom-nav{height:calc(88px + env(safe-area-inset-bottom,0px))}.bottom-nav .nav-btn svg{width:25px;height:25px}.toast{bottom:calc(100px + env(safe-area-inset-bottom,0px))}.stats-grid{gap:7px}.mini-card{padding:17px 10px}.stat-label{font-size:10px}.stat-value{font-size:clamp(15px,3.7vw,23px)}.stat-sub{font-size:9px}}
+    @media(max-width:390px){.app{padding-left:8px;padding-right:8px}.toolbar{padding:0 8px}.table-head,.sale-row{column-gap:4px;padding-left:8px;padding-right:8px}.payment-choice{font-size:11px}.form-card{padding:16px;margin:0 4px}.form-grid{gap:12px}.stats-grid{padding:0 3px}.chart-card{margin-left:3px;margin-right:3px}}
+
+    /* History v2 — grouped by day, payment selector in each row */
+    .table-head,.sale-row{grid-template-columns:minmax(0,1.5fr) minmax(0,1.18fr) minmax(0,.72fr);column-gap:14px}
+    .table-head{border-radius:12px;background:rgba(255,255,255,.29)}
+    .sale-row{min-height:95px;padding-top:16px;padding-bottom:16px}
+    .sale-row .model-name{font-size:15px}
+    .sale-subtitle{font-size:12.5px;color:#98a3b8;margin-top:8px;line-height:1.5;font-variant-numeric:tabular-nums;white-space:normal}
+    .date-group{display:flex;align-items:center;gap:12px;justify-content:space-between;margin:19px 6px 6px;padding:11px 13px;border:1px solid rgba(255,255,255,.72);border-left:4px solid rgba(111,138,196,.72);border-radius:16px;background:linear-gradient(180deg,rgba(219,231,255,.58),rgba(248,250,255,.28));box-shadow:inset 0 1px rgba(255,255,255,.60),0 6px 18px rgba(90,111,160,.06);color:#627492}
+    .date-group:first-child{margin-top:9px}
+    .date-group-title{font-size:13px;font-weight:750;display:flex;align-items:center;gap:9px}
+    .date-group-title svg{width:17px;height:17px;color:#8297bd}
+    .date-count{font-size:11.5px;white-space:nowrap;color:#7f8eaa;font-weight:650;padding:5px 9px;border-radius:999px;background:rgba(255,255,255,.36);border:1px solid rgba(255,255,255,.46)}
+    .payment-selector{display:flex;align-items:center;gap:10px;flex-wrap:nowrap}
+    .payment-icon{width:41px;height:41px;flex:0 0 41px;display:grid;place-items:center;border:1px solid rgba(245,249,255,.97);border-radius:50%;background:rgba(255,255,255,.42);color:#9ba9c0;box-shadow:inset 0 1px rgba(255,255,255,.34);transition:background .15s,transform .15s,border-color .15s,color .15s,box-shadow .15s}
+    .payment-icon svg{width:21px;height:21px;stroke-width:1.75}
+    .payment-icon[aria-pressed=true]{color:#4f72bd;border-color:rgba(131,158,215,.75);background:#dce7ff;box-shadow:0 0 0 2px rgba(117,147,217,.09),inset 0 1px rgba(255,255,255,.82)}
+    .payment-icon:active{transform:scale(.93)}
+    .sale-row .commission{font-weight:650;color:#74849f}
+    .payment-choice[aria-pressed=true]{transform:translateY(-1px)}
+    @media(max-width:690px){
+      .table-head,.sale-row{grid-template-columns:minmax(0,1.4fr) minmax(0,1.14fr) minmax(0,.7fr);column-gap:7px;padding-left:10px;padding-right:10px}
+      .table-head{font-size:clamp(10px,2.2vw,13px)}
+      .sale-row{min-height:86px}
+      .sale-row .model-name{font-size:clamp(11px,2.8vw,14px)}
+      .sale-subtitle{font-size:clamp(9px,2.25vw,12px);margin-top:6px}
+      .sale-row .commission{font-size:clamp(11px,2.8vw,14px)}
+      .payment-selector{gap:7px}
+      .payment-icon{width:36px;height:36px;flex-basis:36px}
+      .payment-icon svg{width:19px;height:19px}
+      .date-group{margin-left:5px;margin-right:5px;padding:12px 7px 10px}
+      .date-group-title{font-size:12.2px}
+      .date-count{font-size:10.5px}
+    }
+    @media(max-width:365px){
+      .table-head,.sale-row{grid-template-columns:minmax(0,1.3fr) minmax(0,1fr) minmax(0,.65fr);gap:4px;padding-left:6px;padding-right:6px}
+      .payment-selector{gap:2px}.payment-icon{width:33px;height:33px;flex-basis:33px}.payment-icon svg{width:18px;height:18px}
+    }
+
+    /* v4: Compact history tiles — retains readable text and clickable payment icons */
+    .sale-row{min-height:72px;padding-top:9px;padding-bottom:9px}
+    .sale-subtitle{margin-top:4px;line-height:1.3}
+    .table-head{min-height:47px}
+    .date-group{margin-top:11px;padding-top:8px;padding-bottom:7px}
+    .date-group:first-child{margin-top:5px}
+    @media(max-width:690px){
+      .toolbar{min-height:60px;margin-bottom:9px}
+      .table-head{min-height:42px}
+      .sale-row{min-height:64px;padding-top:8px;padding-bottom:8px}
+      .sale-row .model-name{line-height:1.25}
+      .sale-subtitle{margin-top:3px;line-height:1.25;font-size:clamp(9px,2.15vw,11px)}
+      .payment-icon{width:35px;height:35px;flex-basis:35px}
+      .payment-icon svg{width:18px;height:18px}
+      .date-group{margin-top:8px;padding:7px 7px}
+      .date-group-title{gap:6px}
+      .date-group-title svg{width:14px;height:14px}
+    }
+    @media(max-width:365px){
+      .sale-row{min-height:61px;padding-top:7px;padding-bottom:7px}
+      .payment-icon{width:31px;height:31px;flex-basis:31px}
+      .payment-icon svg{width:17px;height:17px}
+    }
+    /* v5: very small red notice until payment is chosen */
+    .payment-cell{display:flex;flex-direction:column;align-items:flex-start;justify-content:center;gap:4px;min-width:0}
+    .payment-notice{display:inline-flex;align-items:center;gap:4px;color:#c83f5b;font-size:9px;font-weight:700;line-height:1.1;white-space:nowrap;letter-spacing:-.1px}
+    .payment-notice[hidden]{display:none}
+    .payment-notice::before{content:"";display:block;width:5px;height:5px;flex:none;background:#e14966;border-radius:50%;box-shadow:0 0 0 2px rgba(225,73,102,.10)}
+    .sale-row.payment-pending .payment-icon{background:rgba(255,255,255,.38)}
+    .form-payment-notice{margin-top:9px;font-size:11px}
+    @media(max-width:365px){.payment-cell{gap:3px}.payment-notice{font-size:8px}}
+
+    /* v6 — richer compact dashboard: percentages and baht amounts */
+    .goal-heading,.channel-heading{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+    .goal-heading .card-title,.channel-heading .card-title{margin:2px 0 15px}
+    .target-field{display:flex;flex-direction:column;align-items:flex-end;gap:4px;color:#8d9bb1;font-size:10px;white-space:nowrap}
+    .target-field input{width:122px;min-height:32px;padding:3px 9px;border:1px solid rgba(255,255,255,.87);border-radius:10px;background:rgba(255,255,255,.60);color:#5c7195;text-align:right;font-weight:650;font-size:12px;outline:0}
+    .progress-main,.selection-main{display:flex;align-items:center;gap:16px;margin:7px 0 19px}
+    .progress-percent,.selection-percent{font-weight:800;letter-spacing:-1.8px;font-variant-numeric:tabular-nums;color:#557fc7;font-size:clamp(33px,7vw,51px);line-height:1.1;flex:none}
+    .progress-detail,.selection-detail{display:flex;flex-direction:column;gap:5px;min-width:0}
+    .progress-detail b,.selection-detail b{font-size:clamp(13px,2.9vw,17px);color:#657592;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+    .progress-detail span,.selection-detail span{font-size:11px;color:#95a0b4}
+    .selection-main{margin:0 0 17px}
+    .selection-track .progress-fill{background:linear-gradient(90deg,#87c7c0,#639bb9)}
+    .selection-hint{margin:10px 0 0;font-size:11px;color:#98a3b7}
+    .selection-detail span.pending-alert{color:#bd5265;font-weight:650}
+    .channel-heading>span{color:#9aa6ba;font-size:10px;padding-top:4px;white-space:nowrap}
+    .channel-list{display:grid;gap:12px}
+    .channel{display:flex;flex-direction:column;gap:9px;background:rgba(255,255,255,.25);border:1px solid rgba(255,255,255,.45);border-radius:15px;padding:13px 14px}
+    .channel-top{display:flex;align-items:center;justify-content:space-between;gap:9px}
+    .channel-name{display:flex;align-items:center;gap:9px;color:#687b9b;font-weight:700;font-size:12px;min-width:0}
+    .channel-symbol{display:grid;place-items:center;width:30px;height:30px;flex:none;border-radius:11px;background:#e3ebfc;color:#6487c4}
+    .channel-symbol svg{width:17px;height:17px;stroke:currentColor;stroke-width:1.8}
+    .channel:nth-child(2) .channel-symbol{background:#e1f0f1;color:#669ca2}
+    .channel:nth-child(3) .channel-symbol{background:#ebe7f9;color:#9784c0}
+    .channel:nth-child(4) .channel-symbol{background:#fdebef;color:#c65c77}
+    .channel-money{font-weight:800;color:#627390;font-size:clamp(14px,3.2vw,19px);font-variant-numeric:tabular-nums;white-space:nowrap}
+    .channel-foot{display:flex;align-items:center;justify-content:space-between;font-size:11px;color:#91a0b7;gap:10px}
+    .channel-percent{color:#7387a5;font-weight:700;font-size:12px;font-variant-numeric:tabular-nums}
+    .channel-track{height:7px;background:#dbe6f4}
+    .channel:nth-child(4) .channel-bar{background:#da8597}
+    .channel.pending-channel{border-color:rgba(229,147,164,.31)}
+    @media(max-width:390px){.chart-card{padding:15px 13px}.goal-heading{gap:4px}.target-field input{width:104px}.progress-main,.selection-main{gap:11px}.progress-detail b,.selection-detail b{font-size:12.5px}.progress-note{font-size:10px}.channel{padding:12px 11px}}
+
+    /* Three-tab navigation and restored classic horizontal tracks */
+    .bottom-nav-inner{grid-template-columns:repeat(4,minmax(0,1fr))}
+    .channel-list{display:grid;gap:19px}
+    .channel{display:flex;flex-direction:column;gap:8px;background:none;border:0;border-radius:0;padding:0}
+    .channel-title{font-size:13px;font-weight:650;color:#687b9b}
+    .channel-track{width:100%;height:11px;border-radius:99px;background:rgba(215,226,246,.78);overflow:hidden}
+    .channel-bar{height:100%;border-radius:inherit;background:#89a9e2;transition:width .25s ease}
+    .channel:nth-child(2) .channel-bar{background:#93b4b8}
+    .channel:nth-child(3) .channel-bar{background:#b3a6d8}
+    .channel-foot{margin-top:0;display:flex;justify-content:space-between;gap:12px;color:#7f8faa;font-size:12px;flex-wrap:wrap}
+    .goal-card .progress-wrap{margin-top:7px}
+    .goal-numbers{margin-top:11px;flex-wrap:wrap;font-weight:600;font-variant-numeric:tabular-nums}
+    .goal-numbers span:first-child{color:#647ca6}
+    /* Red outlined circles identify payment methods when none has been selected. */
+    .sale-row.payment-pending .payment-icon{border:1.25px solid #dc7287;background:rgba(255,251,252,.52);color:#c26d7f;box-shadow:0 0 0 .5px rgba(220,114,135,.10)}
+    .sale-row.payment-pending .payment-icon:hover{background:rgba(255,237,243,.72)}
+    .sale-row:not(.payment-pending) .payment-icon:not([aria-pressed=true]){border:1px solid rgba(245,249,255,.97);color:#9ba9c0;background:rgba(255,255,255,.42);box-shadow:inset 0 1px rgba(255,255,255,.34)}
+    @media(max-width:390px){.channel-list{gap:16px}.channel-foot{font-size:11px}.goal-numbers{font-size:10.5px}}
+
+    /* v9: Multi-select / delete mode. No permanent changes to compact history rows. */
+    .toolbar{gap:9px}
+    .delete-toggle{width:48px;height:48px;flex:none;border-radius:15px;display:grid;place-items:center;border:1px solid rgba(255,255,255,.68);background:rgba(255,255,255,.47);color:#8995ae;transition:background .2s,color .2s,transform .15s}
+    .delete-toggle svg{height:21px;width:21px}
+    .delete-toggle:active{transform:scale(.96)}
+    .delete-toggle[aria-pressed=true]{background:rgba(252,229,235,.86);color:#bf536e;border-color:rgba(215,113,141,.38)}
+    .delete-selection-top[hidden],.delete-action-bar[hidden],.dialog-overlay[hidden]{display:none!important}
+    .delete-selection-top{display:flex;justify-content:space-between;align-items:center;gap:8px;margin:0 5px 10px;padding:11px 13px;border-radius:15px;border:1px solid rgba(241,204,215,.62);background:rgba(255,243,246,.67)}
+    .delete-selection-top>div{display:flex;flex-direction:column;gap:3px;min-width:0}
+    .delete-selection-top strong{font-size:12px;color:#9b5e71}
+    .delete-selection-top>div span{font-size:10px;color:#a18f9d}
+    .select-all-label{display:flex;align-items:center;gap:7px;cursor:pointer;white-space:nowrap;font-size:11px;font-weight:700;color:#aa6075}
+    .select-all-label input,.row-check{width:18px;height:18px;accent-color:#bb617d;cursor:pointer;flex:none;margin:0}
+    .sale-table.delete-mode .table-head,.sale-table.delete-mode .sale-row{grid-template-columns:27px minmax(0,1fr) minmax(55px,.32fr);gap:10px}
+    .sale-table.delete-mode .table-head::before{content:'เลือก';font-size:11px;color:#9d7487}
+    .sale-table.delete-mode .table-head .head-payment,.sale-table.delete-mode .payment-cell{display:none}
+    .sale-table.delete-mode .sale-row{cursor:pointer;border-radius:12px}
+    .sale-table.delete-mode .sale-row.delete-marked{background:rgba(251,225,233,.64);outline:1px solid rgba(218,145,163,.26)}
+    .sale-table.delete-mode .sale-row .check-cell{display:flex;align-items:center;justify-content:center}
+    .sale-table.delete-mode .sale-row .commission{text-align:right}
+    .sale-table.delete-mode .date-group{background:linear-gradient(180deg,rgba(220,230,251,.60),rgba(245,248,255,.38))}
+    .delete-action-bar{position:fixed;z-index:28;bottom:calc(102px + env(safe-area-inset-bottom,0px));left:12px;right:12px;max-width:1080px;margin:auto;padding:10px;border-radius:20px;background:rgba(246,247,253,.96);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);border:1px solid rgba(255,255,255,.9);box-shadow:0 12px 34px rgba(75,92,138,.18)}
+    .delete-action-inner{display:flex;align-items:center;gap:9px}
+    .delete-selected-count{color:#6a7893;font-size:12px;font-weight:700;flex:1;min-width:0}
+    .delete-cancel,.delete-confirm-open{min-height:42px;border-radius:12px;border:0;font-size:12px;font-weight:700;padding:0 13px;white-space:nowrap}
+    .delete-cancel{background:rgba(220,230,249,.67);color:#7788a8}
+    .delete-confirm-open{background:#c45c79;color:#fff;box-shadow:0 4px 11px rgba(174,77,108,.18)}
+    .delete-confirm-open:disabled{background:#d5c6ce;color:#f9f5f8;box-shadow:none;cursor:not-allowed}
+    body.delete-selecting .app{padding-bottom:calc(186px + env(safe-area-inset-bottom,0px))}
+    body.delete-selecting .toast{bottom:calc(185px + env(safe-area-inset-bottom,0px))}
+    .dialog-overlay{position:fixed;inset:0;z-index:100;display:grid;place-items:center;background:rgba(48,64,105,.38);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);padding:18px}
+    .delete-dialog-card{width:min(100%,390px);border-radius:24px;border:1px solid rgba(255,255,255,.85);padding:24px;background:rgba(248,249,255,.97);box-shadow:0 27px 60px rgba(47,63,104,.24);color:#586681}
+    .dialog-icon{display:grid;place-items:center;width:47px;height:47px;border-radius:15px;background:#fbe6ec;color:#c45c79;margin-bottom:14px}
+    .dialog-icon svg{width:23px;height:23px}
+    .delete-dialog-card h2{margin:0 0 8px;font-size:19px;color:#566782}
+    .delete-dialog-card p{margin:0 0 10px;color:#7b889f;font-size:13px;line-height:1.6}
+    .delete-dialog-card .delete-dialog-warning{color:#ba5a74;font-size:12px;margin-bottom:19px}
+    .dialog-actions{display:flex;gap:10px}
+    .dialog-actions button{min-height:46px;flex:1;border:0;border-radius:13px;font-weight:700;font-size:13px}
+    #dialog-cancel{background:#e6edfc;color:#7485a5}
+    #dialog-delete{background:#c45c79;color:white}
+    @media(max-width:690px){
+      .toolbar{gap:6px}.delete-toggle{height:44px;width:44px;border-radius:13px}.delete-toggle svg{width:20px;height:20px}
+      .delete-action-bar{bottom:calc(88px + env(safe-area-inset-bottom,0px));left:8px;right:8px}
+    }
+    @media(max-width:390px){
+      .toolbar{gap:5px;padding-left:6px;padding-right:6px}
+      .export{gap:5px;padding-left:8px;padding-right:8px}
+      .export svg{width:18px;height:18px}
+      .delete-toggle{width:40px;height:42px}
+      .sale-table.delete-mode .sale-row,.sale-table.delete-mode .table-head{grid-template-columns:24px minmax(0,1fr) 60px;gap:6px}
+      .delete-selection-top{padding:10px 8px}
+      .delete-action-inner{gap:6px}.delete-cancel,.delete-confirm-open{padding:0 9px}
+    }
+    .date-assumption{margin:0 10px 9px;padding:9px 12px;font-size:11px;line-height:1.5;border-radius:11px;color:#6f7f9d;background:rgba(239,245,255,.46);border:1px solid rgba(255,255,255,.55)}
+    .date-assumption span{color:#8998b2}
+    @media(max-width:365px){.date-assumption{font-size:10px;margin-left:6px;margin-right:6px;padding:8px}}
+
+    /* v11: Compact, editable commission catalog */
+    .catalog-heading{padding-bottom:10px}
+    .catalog-toolbar{display:flex;gap:8px;flex-wrap:wrap;margin:0 9px 12px}
+    .catalog-action{min-height:42px;padding:0 13px;border-radius:12px;white-space:nowrap;border:1px solid rgba(255,255,255,.85);background:rgba(255,255,255,.55);color:#6881a9;font-size:12px;font-weight:700;box-shadow:inset 0 1px rgba(255,255,255,.45)}
+    .catalog-action:active{transform:scale(.97)}
+    .catalog-add{background:#6a88cc;color:#fff;border-color:transparent}
+    .catalog-filters{display:grid;grid-template-columns:1fr minmax(125px,180px);gap:9px;padding:0 9px}
+    .catalog-filters input,.catalog-filters select{min-width:0;min-height:41px;padding:0 11px;border:1px solid rgba(255,255,255,.85);background:rgba(255,255,255,.55);color:#647594;border-radius:12px;font-size:12px;outline:none}
+    .catalog-summary{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:15px 12px 10px;font-size:11px;color:#9aa7b9}
+    .catalog-summary b{color:#657a9e;font-size:13px}
+    .catalog-table-head,.catalog-item{display:grid;grid-template-columns:minmax(0,1fr) 88px 70px 68px;gap:8px;align-items:center}
+    .catalog-table-head{padding:13px 9px;background:rgba(223,231,250,.62);border-radius:13px 13px 0 0;color:#8291ad;font-size:11px}
+    .catalog-item{min-height:69px;padding:10px 9px;border-bottom:1px solid rgba(255,255,255,.46);background:rgba(249,251,255,.15)}
+    .catalog-item:nth-child(even){background:rgba(234,242,255,.31)}
+    .catalog-product-info{min-width:0;display:flex;flex-direction:column;gap:4px}
+    .catalog-product-info strong{font-size:12.5px;font-weight:750;color:#586987;overflow-wrap:anywhere;line-height:1.4}
+    .catalog-product-info span{font-size:10px;color:#8c9ab3}
+    .catalog-product-info small{font-size:10px;color:#b17f66;line-height:1.4}
+    .catalog-cell{font-size:12px;color:#72819d;font-variant-numeric:tabular-nums;white-space:nowrap}
+    .catalog-comm{font-weight:750;color:#617cb6}
+    .catalog-item-actions{display:flex;gap:4px;justify-content:flex-end}
+    .catalog-item-btn{width:30px;height:30px;border:1px solid rgba(255,255,255,.75);border-radius:9px;background:rgba(255,255,255,.65);color:#6a83b1;font-size:19px;display:grid;place-items:center}
+    .catalog-item-btn svg{width:16px;height:16px}
+    .catalog-trash{color:#bb788a}
+    .catalog-disclaimer{font-size:11px;line-height:1.8;color:#8496b1;margin:15px 12px}
+    .catalog-overlay[hidden]{display:none}
+    .catalog-overlay{position:fixed;inset:0;z-index:110;background:rgba(43,64,106,.45);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;padding:18px}
+    .catalog-form,.catalog-import-confirm{width:min(100%,460px);max-height:calc(100dvh - 36px);overflow-y:auto;display:flex;flex-direction:column;gap:12px;padding:23px;border:1px solid rgba(255,255,255,.87);border-radius:23px;background:#f0f3fc;box-shadow:0 19px 50px rgba(55,72,119,.19)}
+    .catalog-form-header{display:flex;align-items:center;justify-content:space-between;gap:10px}
+    .catalog-form h2,.catalog-import-confirm h2{margin:0;font-size:19px;color:#596e91}
+    .catalog-close{border:0;background:none;color:#8795b0;font-size:28px;line-height:1}
+    .catalog-form label{display:flex;flex-direction:column;gap:5px;font-size:12px;color:#7b88a2;font-weight:700}
+    .catalog-form input,.catalog-form textarea{width:100%;min-height:44px;padding:9px 12px;border-radius:12px;border:1px solid #d5deed;background:white;color:#526681;font-size:14px;resize:vertical}
+    .catalog-form-money{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .catalog-form-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:8px}
+    .catalog-import-confirm p{margin:2px 0 0;line-height:1.6;color:#6f7e99;font-size:13px}
+    .catalog-import-confirm .catalog-import-warning{color:#af687d;font-size:12px}
+    @media(max-width:690px){.catalog-table-head,.catalog-item{grid-template-columns:minmax(0,1fr) 74px 65px 65px;gap:5px}.catalog-cell{font-size:11px}.catalog-toolbar{gap:6px}.catalog-action{padding:0 10px;min-height:39px;font-size:11px}}
+    @media(max-width:365px){.catalog-table-head,.catalog-item{grid-template-columns:minmax(0,1fr) 65px 56px 61px;gap:4px;padding-left:5px;padding-right:5px}.catalog-item-btn{width:28px;height:28px}.catalog-item-actions{gap:2px}.catalog-product-info strong{font-size:11.7px}.catalog-cell{font-size:10.3px}.catalog-filters{grid-template-columns:minmax(0,1fr) minmax(112px,120px);gap:5px}.catalog-toolbar{margin-left:3px;margin-right:3px}.catalog-action{padding:0 8px;font-size:10.5px}}
+
+    /* v12 — live commission with immutable historical snapshot comparison */
+    .commission-unmatched{margin:7px 10px 0;padding:8px 12px;border-radius:11px;background:rgba(252,234,238,.8);color:#ae536c;font-size:11px;line-height:1.6}
+    .commission-unmatched[hidden]{display:none}
+    .sale-row .commission-cell{min-width:0;display:flex;flex-direction:column;align-items:flex-start;gap:2px}
+    .commission-amount{font-weight:750;color:#6c82a8;font-size:inherit;font-variant-numeric:tabular-nums}
+    .commission-snapshot{font-weight:500;color:#95a0b5;font-size:9px;line-height:1.45;white-space:normal}
+    .commission-snapshot.is-different{color:#9871ae}
+    .commission-snapshot.is-missing{color:#b45b73}
+    .sale-table.delete-mode .sale-row .commission-cell{align-items:flex-end}
+    /* v14: current catalog prices are linked to sales and Dashboard, with preserved sale-date snapshots */
+    .sale-row .price-snapshot{display:inline-block;margin-left:2px;color:#9871ae;font-size:9px;font-weight:650;white-space:nowrap;vertical-align:baseline}
+    .sale-row .price-snapshot.is-missing{color:#b45b73}
+    @media(max-width:390px){.sale-row .price-snapshot{font-size:8.5px}}
+
+    @media(max-width:390px){.commission-snapshot{font-size:8.5px}}
+
+    /* v13 — dense, grouped commission matrix: two visual lanes on a phone. */
+    .catalog-heading{padding:2px 11px 7px}
+    .catalog-heading h1{font-size:19px;line-height:1.25;margin-bottom:3px}
+    .catalog-heading p{font-size:11px;line-height:1.3}
+    .catalog-toolbar{margin:1px 8px 7px;gap:5px}
+    .catalog-action{min-height:34px;padding:0 10px;font-size:10.5px;border-radius:10px}
+    .catalog-filters{gap:7px;padding:0 8px}
+    .catalog-filters input,.catalog-filters select{min-height:34px;border-radius:10px;font-size:11px;padding:0 8px}
+    .catalog-summary{margin:0;padding:7px 9px 8px;gap:6px;min-height:39px}
+    .catalog-summary>div{display:flex;flex-direction:column;gap:1px;min-width:0}
+    .catalog-summary b{font-size:12px}
+    .catalog-hint{font-size:9px;color:#8d9cba;white-space:nowrap}
+    .catalog-collapse-all{flex:none;min-height:28px;padding:0 9px;border-radius:9px;border:1px solid rgba(255,255,255,.78);background:rgba(255,255,255,.43);color:#6a7eab;font-size:10px;font-weight:650}
+    .catalog-collapse-all:active{transform:scale(.98)}
+    .catalog-rows{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;padding:0 8px;align-items:start}
+    .catalog-lane{display:flex;flex-direction:column;gap:8px;min-width:0}
+    .catalog-series{--series-accent:#849ed7;--series-tint:rgba(206,221,250,.64);background:rgba(255,255,255,.30);border:1px solid rgba(255,255,255,.73);border-radius:13px;padding:3px 3px 5px;box-shadow:0 3px 11px rgba(72,92,149,.055);min-width:0;overflow:hidden}
+    .catalog-series[data-tone="x"]{--series-accent:#7596d5;--series-tint:rgba(207,222,251,.75)}
+    .catalog-series[data-tone="v"]{--series-accent:#8d85cd;--series-tint:rgba(229,219,249,.72)}
+    .catalog-series[data-tone="y"]{--series-accent:#61a5aa;--series-tint:rgba(209,239,239,.78)}
+    .catalog-series[data-tone="iqoo"]{--series-accent:#b69b5a;--series-tint:rgba(244,235,201,.70)}
+    .catalog-series[data-tone="accessory"]{--series-accent:#a78dbe;--series-tint:rgba(232,222,245,.72)}
+    .catalog-series[data-tone="imoo"]{--series-accent:#75a28c;--series-tint:rgba(213,237,221,.72)}
+    .catalog-series-heading{width:100%;min-width:0;display:flex;align-items:center;justify-content:space-between;gap:3px;padding:6px 7px;border:0;border-left:3px solid var(--series-accent);border-radius:8px;background:var(--series-tint);color:#5d7194;text-align:left}
+    .catalog-series-name{min-width:0;font-size:11px;line-height:1.2;font-weight:800;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .catalog-series-meta{display:flex;align-items:center;gap:4px;flex:none}
+    .catalog-series-count{border-radius:6px;background:rgba(255,255,255,.45);padding:1px 5px;font-size:9px;font-weight:700;color:#7c8aa1;font-variant-numeric:tabular-nums}
+    .catalog-series-chevron{font-size:10px;line-height:1;transition:transform .15s}
+    .catalog-series-heading[aria-expanded="false"] .catalog-series-chevron{transform:rotate(-90deg)}
+    .catalog-series-rows{margin-top:2px}
+    .catalog-series-rows[hidden]{display:none}
+    .catalog-mini-row{display:flex;flex-direction:column;justify-content:center;gap:1px;width:100%;min-height:27px;padding:2px 6px;border:0;border-bottom:1px solid rgba(255,255,255,.53);border-radius:4px;background:transparent;text-align:left;color:inherit;min-width:0}
+    .catalog-mini-row:nth-child(even){background:rgba(224,235,254,.26)}
+    .catalog-mini-row:last-child{border-bottom:0}
+    .catalog-mini-row:hover,.catalog-mini-row:focus-visible{background:rgba(216,229,255,.70)}
+    .catalog-mini-name{display:block;max-width:100%;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:10.7px;line-height:1.18;font-weight:670;color:#536886}
+    .catalog-mini-numbers{width:100%;display:flex;align-items:baseline;justify-content:space-between;gap:3px;font-size:9.2px;line-height:1.12;white-space:nowrap;font-variant-numeric:tabular-nums}
+    .catalog-mini-price{font-weight:550;color:#8b98b0}
+    .catalog-mini-commission{font-weight:820;color:#577db8}
+    .catalog-mini-commission::before{content:'คอม ';font-weight:500;color:#8494ae}
+    .catalog-mini-note{display:inline-block;margin-left:2px;font-size:8px;color:#ad7860;vertical-align:middle}
+    .catalog-disclaimer{margin:8px 11px 4px;font-size:10px;line-height:1.5}
+    .catalog-form-delete{margin-right:auto;color:#ba5670;background:rgba(255,229,236,.7);border-color:rgba(213,124,144,.30)}
+    .catalog-form-delete[hidden]{display:none}
+    @media(max-width:999px){.catalog-rows{grid-template-columns:repeat(3,minmax(0,1fr))}}
+    @media(max-width:699px){.catalog-rows{grid-template-columns:repeat(2,minmax(0,1fr))}}
+    @media(max-width:390px){.catalog-toolbar{gap:4px;margin:1px 5px 6px}.catalog-toolbar .catalog-action{min-height:32px;padding:0 7px;font-size:9.8px}.catalog-filters{gap:5px;padding:0 5px}.catalog-rows{gap:6px;padding:0 4px}.catalog-lane{gap:6px}.catalog-series{padding:3px}.catalog-series-heading{padding:6px 5px}.catalog-series-name{font-size:10px}.catalog-mini-row{min-height:31px;padding:3px 5px}.catalog-mini-name{font-size:10.15px}.catalog-mini-numbers{font-size:8.8px}.catalog-hint{font-size:8.5px}.catalog-summary{padding:6px 5px 7px}.catalog-collapse-all{padding:0 7px;font-size:9px}}
+    @media(max-width:340px){.catalog-series-name{font-size:9.5px}.catalog-mini-name{font-size:9.5px}.catalog-mini-numbers{font-size:8.3px}.catalog-mini-commission::before{content:'+'}.catalog-filters{grid-template-columns:minmax(0,1fr) minmax(0,110px)}}
+
+    @media(min-width:700px) and (max-width:999px){.catalog-rows{grid-template-columns:repeat(4,minmax(0,1fr))}}
+    /* Three narrow lanes on common phones: fit most catalog in one viewport. */
+    @media(min-width:375px) and (max-width:699px){
+      .catalog-rows{grid-template-columns:repeat(3,minmax(0,1fr));gap:4px}
+      .catalog-lane{gap:5px}
+      .catalog-series{padding:2px;border-radius:9px}
+      .catalog-series-heading{padding:4px 3px;gap:2px;min-height:23px;border-radius:6px;border-left-width:2px}
+      .catalog-series-name{font-size:9.4px}
+      .catalog-series-meta{gap:2px}
+      .catalog-series-count{font-size:8px;padding:1px 3px}
+      .catalog-series-chevron{font-size:8px}
+      .catalog-mini-row{min-height:24px;padding:2px 4px;gap:1px}
+      .catalog-mini-name{font-size:9.2px;line-height:1.08}
+      .catalog-mini-numbers{font-size:7.8px;line-height:1.05;gap:1px}
+      .catalog-mini-commission::before{content:'+';font-weight:700}
+      .catalog-mini-note{font-size:6px}
+    }
+    @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+
+    /* v15: hide the browser's numeric stepper arrows without changing input behavior. */
+    #goal-target::-webkit-outer-spin-button,
+    #goal-target::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+    #goal-target{-moz-appearance:textfield;appearance:textfield}
+
+    /* v16: compact actions for both Excel export and import on a narrow phone */
+    .toolbar .history-import{background:rgba(238,244,255,.72)}
+    @media(max-width:690px){.toolbar .export{padding:0 9px;gap:5px;min-height:44px;border-radius:13px;font-size:10.5px}.toolbar .export svg{width:17px;height:17px;flex:none}.toolbar .search{gap:5px}.toolbar .search input{font-size:11px}.toolbar .search svg{width:18px;height:18px}}
+    @media(max-width:390px){.toolbar{gap:4px;padding:0 4px}.toolbar .export{padding:0 6px;min-height:40px;font-size:9.5px;gap:3px}.toolbar .export svg{width:15px;height:15px}.toolbar .search{min-width:0}.toolbar .search input{font-size:10.5px}.toolbar .delete-toggle{width:36px;height:40px;flex:none}}
+
+    /* v18: protective product-name matching during sales Excel import */
+    .sales-match-panel{margin:14px 0 10px;padding:12px;border:1px solid rgba(199,126,141,.35);background:rgba(255,239,242,.67);border-radius:14px;max-height:min(40vh,320px);overflow:auto}
+    .sales-match-panel[hidden]{display:none}
+    .sales-match-heading{font-size:13px;line-height:1.4;color:#99556e;font-weight:750;margin:0 0 4px}
+    .sales-match-help{font-size:11px;color:#916c7e;line-height:1.6;margin:0 0 10px}
+    .sales-match-item{padding:10px 0;border-top:1px solid rgba(200,142,156,.22)}
+    .sales-match-source{font-weight:730;font-size:12px;color:#5e6e8e;overflow-wrap:anywhere}
+    .sales-match-rows{font-size:10px;color:#a0768b;margin:3px 0 7px}
+    .sales-match-select{display:block;width:100%;min-height:38px;background:rgba(255,255,255,.88);border:1px solid #c8aab9;border-radius:11px;padding:7px;color:#5c6f91;font-size:12px;max-width:100%}
+    .sales-match-select:focus-visible{outline:2px solid #7696d0}
+    .sales-match-item.is-resolved .sales-match-select{border-color:#88b9a6;background:#f3fff9}
+    .sales-import-notice{font-size:11px;color:#a35d75;margin:7px 0;line-height:1.5}
+    #sales-import-confirm:disabled{opacity:.52;cursor:not-allowed}
+
+    /* v19 — Sale Composer adapted from vteam-npt/Dashboard/src/SaleComposer.jsx.
+       Standalone implementation driven entirely by the editable local catalog. */
+    .composer-heading{padding-bottom:12px}
+    .composer-search-row{padding:0 9px 12px;display:flex;gap:9px;align-items:center}
+    .composer-search-row input{min-width:0;width:100%;height:41px;padding:0 13px;border:1px solid rgba(255,255,255,.83);border-radius:13px;background:rgba(255,255,255,.54);color:#627493;outline:0;font-size:12px}
+    .composer-groups{display:grid;gap:9px;margin:0 9px;padding-bottom:88px}
+    .composer-group{border:1px solid rgba(255,255,255,.75);background:rgba(255,255,255,.31);border-radius:17px;padding:5px;min-width:0;overflow:hidden}
+    .composer-series-head,.composer-model-head{width:100%;display:flex;align-items:center;justify-content:space-between;text-align:left;border:0;gap:8px;color:#647795}
+    .composer-series-head{border-radius:12px;background:rgba(215,226,249,.68);min-height:47px;padding:9px 12px}
+    .composer-series-head b{font-weight:770;font-size:14px}
+    .composer-series-meta{display:flex;align-items:center;gap:8px;font-size:11px;color:#7890b2}
+    .composer-series-count{border-radius:99px;background:#f8faff88;padding:3px 8px;min-width:23px;text-align:center}
+    .composer-chevron{font-size:15px;transition:transform .17s}
+    .composer-series-head[aria-expanded=true] .composer-chevron,.composer-model-head[aria-expanded=true] .composer-chevron{transform:rotate(180deg)}
+    .composer-model-list{padding:6px 5px 4px;display:grid;gap:5px}
+    .composer-model{border-radius:12px;border:1px solid rgba(255,255,255,.6);background:rgba(252,253,255,.35);overflow:hidden}
+    .composer-model-head{min-height:42px;padding:8px 11px;font-size:12px;font-weight:730;background:rgba(255,255,255,.20)}
+    .composer-model-head .composer-model-meta{display:flex;align-items:center;gap:10px;white-space:nowrap;color:#8395b4;font-weight:550;font-size:10px}
+    .composer-variant-list{display:grid;gap:3px;padding:5px 7px 8px}
+    .composer-variant{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 8px 8px 10px;border-radius:11px;background:rgba(245,249,255,.42);border:1px solid rgba(255,255,255,.67)}
+    .composer-variant-info{display:flex;flex-direction:column;gap:3px;min-width:0}
+    .composer-variant-info strong{font-weight:730;font-size:12px;color:#60728f;overflow-wrap:anywhere}
+    .composer-variant-info small{font-size:10px;color:#8596b2;font-variant-numeric:tabular-nums;line-height:1.35}
+    .composer-counter{display:flex;align-items:center;gap:4px;flex:none}
+    .composer-counter button{width:34px;height:34px;display:grid;place-items:center;border:1px solid rgba(150,174,222,.46);background:rgba(255,255,255,.65);border-radius:11px;color:#6082c0;font-size:23px;line-height:1;padding:0}
+    .composer-counter button:disabled{color:#a7b0c0;opacity:.45;cursor:not-allowed}
+    .composer-counter .plus{background:#718cd2;color:white;border-color:#718cd2}
+    .composer-counter b{min-width:23px;text-align:center;color:#647ca9;font-size:13px;font-variant-numeric:tabular-nums}
+    .composer-bottom{position:sticky;bottom:calc(83px + env(safe-area-inset-bottom,0px));z-index:9;border:1px solid rgba(255,255,255,.83);border-radius:16px;padding:10px 12px;background:rgba(241,246,255,.93);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);box-shadow:0 11px 28px rgba(82,113,171,.11);display:flex;gap:8px;justify-content:space-between;align-items:center;margin:0 9px}
+    .composer-bottom-info{display:flex;flex-direction:column;gap:3px;color:#697d9d;font-size:12px}
+    .composer-bottom-info b{font-size:14px;color:#597ab8}
+    .composer-primary{border:0;border-radius:12px;background:#6d88d0;color:white;min-height:42px;padding:0 15px;font-size:12px;font-weight:730;white-space:nowrap}
+    .composer-primary:disabled{opacity:.45;cursor:not-allowed}
+    .composer-empty{padding:40px 15px;text-align:center;font-size:12px;color:#8695ac}
+    .composer-sum-overlay[hidden]{display:none}
+    .composer-sum-overlay{position:fixed;inset:0;z-index:150;background:rgba(53,73,120,.40);backdrop-filter:blur(9px);-webkit-backdrop-filter:blur(9px);display:flex;justify-content:center;align-items:flex-end;padding:15px}
+    .composer-sheet{width:min(100%,620px);max-height:min(91dvh,950px);min-height:200px;display:flex;flex-direction:column;gap:11px;padding:20px;border-radius:25px;background:#f4f6ff;border:1px solid rgba(255,255,255,.93);box-shadow:0 30px 75px rgba(48,66,111,.25)}
+    .composer-sheet-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+    .composer-sheet-head h2{margin:0;font-size:20px;color:#5d6d88}
+    .composer-sheet-head p{margin:4px 0 0;font-size:11px;color:#8f9cb2}
+    .composer-sheet-close{border:0;background:none;color:#8797b3;font-size:27px;padding:0 5px}
+    .composer-summary-list{overflow-y:auto;min-height:0;display:grid;align-content:start;gap:10px;padding:2px 1px;overscroll-behavior:contain}
+    .composer-summary-item{background:rgba(255,255,255,.65);border:1px solid white;border-radius:17px;padding:13px}
+    .composer-item-top{display:flex;align-items:center;justify-content:space-between;gap:12px}
+    .composer-item-top b{font-size:13px;color:#5c6f90}
+    .composer-item-top small{display:block;font-size:10px;color:#8593aa;margin-top:4px}
+    .composer-item-remove{border:1px solid rgba(205,139,155,.3);color:#ba7388;background:#fff2f5;border-radius:9px;padding:6px;display:grid;place-items:center}
+    .composer-item-remove svg{width:18px;height:18px}
+    .composer-payments{display:flex;align-items:center;gap:10px;margin:12px 0}
+    .composer-payment{width:43px;height:43px;border-radius:50%;border:1px solid #bac8e1;background:rgba(255,255,255,.72);color:#899ab5;display:grid;place-items:center}
+    .composer-payment svg{width:24px;height:24px;stroke-width:1.6}
+    .composer-payment[aria-pressed=true]{background:#d8e5ff;border:1.5px solid #6d8fd4;color:#5373bb;box-shadow:0 0 0 2px rgba(100,137,212,.10)}
+    .composer-payment-pending .composer-payment{border:1px solid #d48694}
+    .composer-pending-notice{font-size:10px;font-weight:630;color:#c06f83;line-height:1.3}
+    .composer-item-fields{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:11px}
+    .composer-item-fields label{display:flex;flex-direction:column;gap:5px;color:#8793aa;font-size:10px}
+    .composer-item-fields input{min-width:0;width:100%;height:40px;border-radius:11px;border:1px solid #d9dfeb;padding:0 10px;background:white;color:#556984;font-size:13px}
+    .composer-sheet-footer{border-top:1px solid rgba(187,198,221,.4);padding-top:10px;display:grid;gap:8px}
+    .composer-summary-stats{display:flex;justify-content:space-between;gap:7px;flex-wrap:wrap;color:#71829f;font-size:11px;font-weight:650}
+    .composer-sheet-footer .composer-primary{width:100%;min-height:47px;font-size:14px}
+    .composer-note{font-size:10px;color:#94a0b4;line-height:1.45}
+    .composer-error{color:#b65e73;font-size:12px;margin:2px 0 0}
+    @media(min-width:740px){.composer-sum-overlay{align-items:center}.composer-groups{grid-template-columns:repeat(2,minmax(0,1fr))}.composer-bottom{bottom:calc(101px + env(safe-area-inset-bottom,0px))}}
+    @media(max-width:390px){.composer-sheet{padding:15px}.composer-variant{padding:7px}.composer-counter{gap:3px}.composer-counter button{width:31px;height:31px}.composer-bottom{padding:9px}.composer-search-row{padding-left:5px;padding-right:5px}.composer-groups{margin:0 5px}.bottom-nav .nav-btn{font-size:10px}}
+
+    /* v20 — Content-first, compact professional visual system. */
+    :root{--text:#4d5d79;--muted:#8797ae;--blue:#5176bc;--panel:rgba(249,251,255,.76);--shadow:0 12px 36px rgba(66,86,132,.075)}
+    body{background:linear-gradient(130deg,#9bafe0 0%,#afc1e9 55%,#aabce6 100%)}
+    body::before{background:radial-gradient(ellipse at 80% 2%,rgba(248,249,255,.25),transparent 54%)}
+    .app{max-width:1040px;padding-top:21px}
+    .glass-panel{border-radius:22px;padding:13px 13px 24px;border-color:rgba(255,255,255,.65);box-shadow:var(--shadow)}
+    .section-head{padding:10px 11px 13px;min-height:47px}
+    .section-head h1{font-size:20px;font-weight:740;letter-spacing:-.45px;color:#425676;line-height:1.4;margin:0}
+    .section-head p{display:none}
+    .history-heading,.composer-heading{display:flex;align-items:center;justify-content:space-between;gap:12px}
+    .history-total,.heading-side-note{font-size:11px;color:#7f8eaa;font-weight:650;font-variant-numeric:tabular-nums}
+    .heading-side-note{font-weight:500}
+    .toolbar{min-height:48px;margin:0 6px 10px;padding:0;gap:7px}
+    .toolbar .search{padding:0 10px;min-height:41px;border:1px solid rgba(255,255,255,.85);border-radius:11px;background:rgba(255,255,255,.46)}
+    .toolbar .search svg{width:17px;height:17px}
+    .toolbar .search input{font-size:12px}
+    .toolbar .export{min-height:41px;border-radius:11px;padding:0 10px;gap:6px;box-shadow:none;color:#667b9e;font-weight:650;font-size:11px}
+    .toolbar .export svg{width:16px;height:16px}
+    .toolbar .delete-toggle{width:41px;height:41px;border-radius:11px;box-shadow:none}
+    .date-assumption{display:inline-flex;align-items:center;margin:0 9px 9px;padding:5px 9px;border:0;background:rgba(229,235,247,.66);color:#7183a1;font-size:10px;line-height:1.25;border-radius:7px}
+    .footnote{display:none}
+    .table-head{min-height:35px;border-radius:9px;background:rgba(221,230,247,.54);color:#8291aa;font-size:11px;font-weight:650}
+    .sale-row{min-height:62px;border-bottom:1px solid rgba(137,163,205,.13);background:transparent}
+    .sale-row:hover{background:rgba(236,243,254,.56)}
+    .sale-row .model-name{font-weight:720;color:#536584}
+    .sale-subtitle{color:#8a99ae}
+    .sale-row .commission{font-weight:760;color:#4f719f}
+    .date-group{margin:10px 4px 4px;padding:8px 10px;border:0;border-left:3px solid #8da8d5;border-radius:8px;background:rgba(217,229,248,.64);box-shadow:none}
+    .date-group:first-child{margin-top:5px}
+    .date-group-title{font-size:12px;font-weight:730;color:#506686}
+    .date-count{border:0;border-radius:6px;padding:3px 6px;background:rgba(255,255,255,.56);color:#657c9f;font-size:10px}
+    .payment-icon[aria-pressed=true]{background:#dbe7fc;border-color:#8aa8dc;box-shadow:none}
+    .payment-icon:not([aria-pressed=true]){box-shadow:none}
+    .stats-grid{gap:9px;padding:0 5px}
+    .mini-card{background:rgba(255,255,255,.58);padding:14px 13px;border:1px solid rgba(255,255,255,.76);border-radius:13px;box-shadow:none}
+    .stat-label{font-size:11px;font-weight:600;color:#7b8da5;margin-bottom:5px}
+    .stat-value{font-weight:780;color:#3e618e;letter-spacing:-.65px;font-variant-numeric:tabular-nums;font-size:clamp(17px,2.5vw,27px)}
+    .chart-card{padding:17px;margin:10px 5px 0;border-radius:14px;background:rgba(255,255,255,.48);border-color:rgba(255,255,255,.72)}
+    .card-title{font-size:13px;font-weight:730;color:#52698b;margin-bottom:12px}
+    .target-field{font-size:10px}
+    .target-field input{border-radius:8px}
+    .progress-wrap{height:10px}
+    .progress-note{font-size:11px}
+    .channel-list{gap:16px}
+    .channel-title{font-size:12px;font-weight:700;color:#617593}
+    .channel-track{height:9px}
+    .channel-foot{font-size:11px;color:#788ba8}
+    .composer-search-row{padding:0 5px 11px}
+    .composer-search-row input{height:40px;border-radius:10px;font-size:12px}
+    .composer-groups{gap:8px;margin:0 5px;padding-bottom:69px}
+    .composer-group{padding:0;border:1px solid rgba(255,255,255,.78);background:rgba(255,255,255,.46);border-radius:12px;box-shadow:none}
+    .composer-series-head{min-height:42px;background:rgba(218,230,251,.64);border-radius:11px;padding:8px 12px}
+    .composer-series-head b{font-size:12.5px;font-weight:750;color:#536a8b}
+    .composer-series-meta{gap:5px;font-size:10px}
+    .composer-series-count{min-width:0;padding:2px 6px;background:rgba(255,255,255,.58);font-size:10px}
+    .composer-series-count:empty{display:none}
+    .composer-model-list{gap:0;padding:1px 7px 5px}
+    .composer-model{background:transparent;border:0;border-radius:0;border-bottom:1px solid rgba(146,171,210,.19)}
+    .composer-model:last-child{border-bottom:0}
+    .composer-model-head{min-height:39px;padding:7px 7px;background:transparent;font-size:12px;font-weight:710;color:#617390}
+    .composer-variant-list{gap:0;padding:0 4px 5px}
+    .composer-variant{background:transparent;border:0;border-top:1px solid rgba(143,164,199,.12);border-radius:0;padding:7px 5px 7px 8px;min-height:48px}
+    .composer-variant-info{gap:2px}
+    .composer-variant-info strong{font-size:11.6px;font-weight:730;color:#4f6889}
+    .composer-variant-info small{font-size:10px;color:#8a97ab}
+    .composer-comm-accent{font-weight:730;color:#587bb6}
+    .composer-counter button{width:31px;height:31px;border-radius:9px;font-size:19px}
+    .composer-counter .plus{background:#6888c4;border-color:#6888c4}
+    .composer-counter b{font-size:12px;min-width:21px}
+    .composer-bottom{margin:0 5px;padding:9px 11px;border-radius:12px;box-shadow:0 4px 16px rgba(88,110,158,.09);background:rgba(247,250,255,.96);bottom:calc(79px + env(safe-area-inset-bottom,0px))}
+    .composer-bottom-info{font-size:10px;gap:2px}
+    .composer-bottom-info b{font-size:13px}
+    .composer-primary{background:#557bc1;border-radius:10px;min-height:39px;font-size:11px;padding:0 15px}
+    .composer-sheet{gap:9px;border-radius:20px;background:#f5f7fc;padding:18px}
+    .composer-sheet-head h2{font-size:17px;font-weight:750;color:#455d7f}
+    .composer-sheet-head p{font-size:10px;color:#8292aa}
+    .composer-summary-list{gap:7px}
+    .composer-summary-item{background:rgba(255,255,255,.78);border-radius:12px;padding:11px 12px}
+    .composer-item-top b{font-size:12px;color:#4f6483}
+    .composer-payments{margin:9px 0;gap:11px}
+    .composer-payment{width:40px;height:40px}
+    .composer-payment svg{width:21px;height:21px}
+    .composer-item-fields{margin-top:8px}
+    .composer-note{font-size:10px;line-height:1.5;color:#8692a7;margin:2px 0}
+    .composer-pending-notice{display:none}
+    .catalog-heading{padding:9px 10px 12px}
+    .catalog-toolbar{margin:0 5px 9px;gap:6px}
+    .catalog-action{box-shadow:none;font-weight:650;border-radius:9px}
+    .catalog-filters{padding:0 5px;gap:7px}
+    .catalog-filters input,.catalog-filters select{border-radius:9px}
+    .catalog-summary{padding:8px 6px 9px}
+    .catalog-hint{color:#8192ab}
+    .catalog-rows{padding:0 5px;gap:7px}
+    .catalog-series{box-shadow:none;background:rgba(255,255,255,.42);border-radius:10px}
+    .catalog-series-heading{border-radius:7px}
+    .catalog-mini-row:nth-child(even){background:rgba(220,231,251,.24)}
+    .catalog-mini-commission{color:#496ca8}
+    .catalog-policy{margin:13px 9px 2px;border-top:1px solid rgba(132,156,196,.2);padding:11px 3px 0;font-size:10px;color:#7b8ba4;line-height:1.6}
+    .catalog-policy summary{cursor:pointer;color:#667ea0;font-weight:690;width:max-content}
+    .catalog-policy p{margin:7px 0 0}
+    .bottom-nav{height:calc(76px + env(safe-area-inset-bottom,0px));padding:4px 8px calc(7px + env(safe-area-inset-bottom,0px));box-shadow:0 -5px 15px rgba(81,106,154,.035)}
+    .bottom-nav-inner{gap:4px}
+    .nav-btn{border-radius:12px;gap:4px;font-weight:550}
+    .nav-btn svg{width:23px;height:23px}
+    .nav-btn.active{background:rgba(208,223,252,.64);font-weight:730;color:#3f69b1}
+    .delete-selection-top{border-radius:10px}
+    .delete-action-bar{border-radius:13px;bottom:calc(84px + env(safe-area-inset-bottom,0px))}
+    @media(max-width:690px){
+      .app{padding:11px 7px calc(92px + env(safe-area-inset-bottom,0px))}
+      .glass-panel{min-height:calc(100dvh - 98px);border-radius:17px;padding:9px 5px 17px}
+      .section-head{padding:9px 9px 11px}
+      .section-head h1{font-size:19px}
+      .toolbar{margin:0 4px 9px;gap:5px;min-height:41px}
+      .toolbar .search{min-width:0;padding:0 6px;min-height:38px}
+      .toolbar .search input{font-size:11px}
+      .toolbar .export{padding:0 7px;min-height:38px;font-size:10px;gap:4px}
+      .toolbar .export svg{width:15px;height:15px}
+      .toolbar .delete-toggle{width:38px;height:38px}
+      .stats-grid{gap:6px;padding:0 3px}
+      .mini-card{padding:12px 10px;border-radius:10px}
+      .stat-label{font-size:10px;min-height:12px}
+      .stat-value{font-size:clamp(14px,3.6vw,20px)}
+      .chart-card{padding:14px;margin:9px 3px 0}
+      .composer-groups{margin:0 3px;padding-bottom:62px}
+      .composer-bottom{margin:0 3px;bottom:calc(72px + env(safe-area-inset-bottom,0px))}
+      .bottom-nav{height:calc(69px + env(safe-area-inset-bottom,0px))}
+      .bottom-nav .nav-btn{font-size:10px}
+      .bottom-nav .nav-btn svg{width:22px;height:22px}
+      .date-group{margin:9px 3px 4px}
+      .date-assumption{margin:0 6px 8px}
+      .table-head{min-height:33px}
+      .sale-row{min-height:61px}
+      .catalog-toolbar .catalog-action{min-height:34px}
+      .catalog-series-name{font-weight:760}
+    }
+    @media(max-width:365px){
+      .toolbar{gap:3px}
+      .toolbar .export{padding:0 5px;font-size:9px}
+      .toolbar .export svg{width:13px;height:13px}
+      .toolbar .delete-toggle{width:35px}
+      .composer-variant-info strong{font-size:11px}
+      .composer-counter button{width:30px;height:30px}
+      .composer-sheet{padding:13px}
+      .composer-item-fields{gap:5px}
+    }
+    @media(prefers-reduced-motion:reduce){.view{animation:none}}
+
+    /* Accessibility pass: stronger foreground contrast on translucent surfaces. */
+    :root{--text:#354b69;--muted:#677d9c;--panel:rgba(248,250,255,.86)}
+    .section-head h1,.history-heading h1{color:#344d70}
+    .heading-side-note,.history-total,.date-assumption,.stat-label,.target-field{color:#536b8b}
+    .toolbar .search input,.composer-search-row input,.catalog-filters input,.catalog-filters select{color:#394e6e}
+    .toolbar .search input::placeholder,.composer-search-row input::placeholder,.catalog-filters input::placeholder{color:#7183a1;opacity:1}
+    .toolbar .export,.catalog-action:not(.catalog-add){color:#4a6285}
+    .date-group-title{color:#3d577e}
+    .date-group-title svg{color:#6685b6}
+    .date-count{color:#4d6381}
+    .sale-row .model-name{color:#40597b}
+    .sale-subtitle{color:#697d9b}
+    .sale-row .commission,.commission-amount{color:#46699f}
+    .table-head,.table-head span{color:#617895}
+    .mini-card{background:rgba(255,255,255,.77)}
+    .stat-label{color:#5f7390}
+    .stat-value{color:#355784}
+    .card-title,.channel-title{color:#405b7f}
+    .chart-card{background:rgba(255,255,255,.70)}
+    .progress-note,.progress-note span,.channel-foot,.channel-foot span{color:#5b7395}
+    .goal-numbers span:first-child{color:#41628e}
+    .target-field input{color:#3f5b84;background:rgba(255,255,255,.87)}
+    .composer-series-head b,.composer-model-head{color:#435e81}
+    .composer-variant-info strong{color:#3c567a}
+    .composer-variant-info small{color:#6e819c}
+    .composer-comm-accent,.composer-bottom-info b{color:#456ca9}
+    .composer-bottom-info{color:#5b7494}
+    .composer-sheet-head h2,.composer-item-top b{color:#3d5576}
+    .composer-item-top small,.composer-note{color:#607795}
+    .catalog-series-heading{color:#405c81}
+    .catalog-series-name{color:#456182}
+    .catalog-mini-name{color:#3d5678}
+    .catalog-mini-price{color:#5c7190}
+    .catalog-mini-commission{color:#355d9b}
+    .catalog-mini-commission::before{color:#536c91}
+    .catalog-policy summary{color:#4d698d}
+    .nav-btn{color:#5e718e}
+    .nav-btn.active{color:#315da5}
+  </style>
+</head>
+<body>
+  <main class="app">
+    <section class="glass-panel">
+      <div class="view active" id="view-history">
+        <header class="section-head history-heading"><h1>รายการขาย</h1><span id="history-total-count" class="history-total">19 เครื่อง</span></header>
+        <div class="toolbar">
+          <label class="search" aria-label="ค้นหารายการขาย">
+            <svg width="27" height="27" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="10.8" cy="10.8" r="7.7"/><path d="m16.5 16.5 5 5"/></svg>
+            <input id="search-input" type="search" placeholder="ค้นหารุ่นสินค้า" autocomplete="off">
+          </label>
+          <button class="export" id="export-btn" type="button">
+            <svg width="25" height="25" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12m-5-5 5 5 5-5"/><path d="M4 15v5h16v-5"/></svg>
+            <span>ส่งออก</span>
+          </button>
+          <button class="export history-import" id="sales-import-btn" type="button" title="นำเข้ารายการขายจาก Excel">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 16V3m-5 5 5-5 5 5M4 14v6h16v-6"/></svg>
+            <span>นำเข้า</span>
+          </button>
+          <input id="sales-import-file" type="file" accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" hidden>
+          <button class="delete-toggle" id="delete-toggle" type="button" aria-pressed="false" aria-label="เลือกและลบรายการขาย" title="เลือกรายการเพื่อลบ">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M9 7V4h6v3M7 7l1 13h8l1-13M10 11v6m4-6v6"/></svg>
+          </button>
+        </div>
+        <div id="delete-select-all" class="delete-selection-top" hidden>
+          <div><strong>เลือกรายการเพื่อลบ</strong></div>
+          <label class="select-all-label"><input type="checkbox" id="select-all-visible"><span>เลือกทั้งหมด</span></label>
+        </div>
+        <p class="date-assumption">ข้อมูลตัวอย่าง · วันที่ขายสมมติ</p>
+        <div class="sale-table" id="sale-table" role="table" aria-label="ประวัติรายการขาย">
+          <div class="table-head" role="row"><span class="head-model" role="columnheader">สินค้า</span><span class="head-payment" role="columnheader">ช่องทางชำระ</span><span class="head-commission" role="columnheader">คอมรวม</span></div>
+          <div id="sales-rows" role="rowgroup"></div>
+        </div>
+        <p class="footnote" id="history-footnote">วันที่ของข้อมูลตัวอย่างเป็นวันสมมติ</p>
+      </div>
+
+      <div class="view" id="view-dashboard">
+        <header class="section-head"><h1>ภาพรวม</h1></header>
+        <div class="stats-grid">
+          <div class="mini-card"><div class="stat-label">มูลค่ายอดขาย</div><div class="stat-value" id="stat-sales">฿0</div></div>
+          <div class="mini-card"><div class="stat-label">ค่าคอม</div><div class="stat-value" id="stat-commission">฿0</div></div>
+          <div class="mini-card"><div class="stat-label">จำนวนเครื่อง</div><div class="stat-value" id="stat-qty">0</div></div>
+        </div>
+        <div class="commission-unmatched" id="commission-unmatched" hidden></div>
+        <div class="chart-card goal-card">
+          <div class="goal-heading"><h2 class="card-title">เป้ายอดขาย</h2><label class="target-field" for="goal-target">เป้าหมาย (บาท)<input id="goal-target" type="number" min="1" step="1000" inputmode="numeric" value="1200000" aria-label="กำหนดเป้าหมายยอดขาย"></label></div>
+          <div class="progress-wrap"><div class="progress-fill" id="progress-fill"></div></div>
+          <div class="progress-note goal-numbers"><span id="progress-label">฿0 / ฿1,200,000 (0%)</span><span id="progress-remaining">เหลือ ฿1,200,000</span></div>
+        </div>
+        <div class="chart-card channel-card">
+          <h2 class="card-title">ช่องทางชำระเงิน</h2>
+          <div class="channel-list" id="channel-list"></div>
+        </div>
+      </div>
+
+
+      <div class="view" id="view-compose">
+        <header class="section-head composer-heading"><h1>บันทึกยอด</h1><span class="heading-side-note">เลือกสินค้า</span></header>
+        <div class="composer-search-row"><input id="compose-search" type="search" placeholder="ค้นหารุ่นสินค้า" aria-label="ค้นหารุ่นเพื่อบันทึกยอด" autocomplete="off"></div>
+        <div class="composer-groups" id="compose-groups" aria-label="เลือกสินค้าแยกตามซีรีส์"></div>
+        <div class="composer-bottom"><div class="composer-bottom-info"><span id="compose-cart-count">0 เครื่อง</span><b id="compose-cart-commission">คอม ฿0</b></div><button class="composer-primary" id="compose-review" type="button" disabled>ตรวจสอบรายการ</button></div>
+      </div>
+
+      <div class="view" id="view-catalog">
+        <header class="section-head catalog-heading"><h1>ตารางค่าคอม</h1></header>
+        <div class="catalog-toolbar">
+          <button type="button" class="catalog-action catalog-add" id="catalog-add">+ เพิ่มรุ่น</button>
+          <button type="button" class="catalog-action" id="catalog-export">↓ ส่งออก</button>
+          <button type="button" class="catalog-action" id="catalog-import">↑ นำเข้า</button>
+          <input id="catalog-file" type="file" accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" hidden>
+        </div>
+        <div class="catalog-filters">
+          <input type="search" id="catalog-search" placeholder="ค้นหารุ่น" aria-label="ค้นหารุ่นในตารางค่าคอม">
+          <select id="catalog-category" aria-label="กรองหมวดสินค้า"><option value="">ทุกหมวดสินค้า</option></select>
+        </div>
+        <div class="catalog-summary"><div><b id="catalog-count">0 รุ่น</b><span class="catalog-hint">บาท/เครื่อง</span></div><button type="button" id="catalog-toggle-all" class="catalog-collapse-all">ย่อหมวดทั้งหมด</button></div>
+        <div id="catalog-rows" class="catalog-rows" aria-label="ตารางค่าคอมแยกตามซีรีส์"></div>
+        <details class="catalog-policy"><summary>การคำนวณราคาและค่าคอม</summary><p>แก้ราคาและค่าคอมแล้วตัวเลขปัจจุบันในรายการขายและภาพรวมจะอัปเดตทันที ส่วนค่าที่บันทึก ณ วันขายยังเก็บไว้ หากลบรุ่นจากตาราง ระบบจะใช้ข้อมูลเดิมของรายการนั้น และควรเก็บรหัสสินค้าเดิมไว้เมื่อแก้ไฟล์ Excel</p></details>
+      </div>
+    </section>
+  </main>
+
+  <nav class="bottom-nav" aria-label="เมนูหลัก">
+    <div class="bottom-nav-inner">
+      <button class="nav-btn" data-view="compose" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="2.5" width="10" height="19" rx="2"/><path d="M10 6h4M12 11v7m-3.5-3.5h7"/></svg><span>บันทึกยอด</span></button>
+      <button class="nav-btn" data-view="dashboard" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="8" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="15" width="7" height="6" rx="1"/></svg><span>แดชบอร์ด</span></button>
+      <button class="nav-btn active" data-view="history" type="button" aria-current="page"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M3.5 11a8.5 8.5 0 1 0 2.1-5.6L3 8"/><path d="M3 3v5h5M12 7v5l3 2"/></svg><span>รายการขาย</span></button>
+      <button class="nav-btn" data-view="catalog" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M3 4h18v16H3zM3 9h18M9 9v11M15 9v11"/><path d="M6 6.5h2M12 6.5h2"/></svg><span>ตารางค่าคอม</span></button>
+    </div>
+  </nav>
+
+  <div class="composer-sum-overlay" id="compose-summary-overlay" hidden>
+    <section class="composer-sheet" role="dialog" aria-modal="true" aria-labelledby="compose-summary-title">
+      <div class="composer-sheet-head"><div><h2 id="compose-summary-title">ตรวจสอบรายการ</h2><p>ข้อมูลก่อนบันทึก</p></div><button class="composer-sheet-close" id="compose-close" aria-label="ปิด" type="button">×</button></div>
+      <div class="composer-summary-list" id="compose-summary-list"></div>
+      <div class="composer-sheet-footer"><div class="composer-summary-stats" id="compose-summary-stats"></div><p class="composer-note">เว้นช่องทางชำระไว้ได้ และกลับมาเลือกในรายการขายภายหลัง</p><p class="composer-error" id="compose-error" role="alert" hidden></p><button class="composer-primary" type="button" id="compose-save">บันทึกยอด</button></div>
+    </section>
+  </div>
+  <div class="delete-action-bar" id="delete-action-bar" hidden>
+    <div class="delete-action-inner">
+      <div class="delete-selected-count" id="delete-selected-count" aria-live="polite">เลือกแล้ว 0 รายการ</div>
+      <button class="delete-cancel" id="delete-cancel" type="button">ยกเลิก</button>
+      <button class="delete-confirm-open" id="delete-confirm-open" type="button" disabled>ลบที่เลือก (0)</button>
+    </div>
+  </div>
+  <div class="dialog-overlay" id="delete-dialog" hidden>
+    <div class="delete-dialog-card" role="alertdialog" aria-modal="true" aria-labelledby="delete-dialog-title" aria-describedby="delete-dialog-text">
+      <div class="dialog-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16M9 7V4h6v3M7 7l1 13h8l1-13M10 11v6m4-6v6"/></svg></div>
+      <h2 id="delete-dialog-title">ยืนยันการลบรายการ?</h2>
+      <p id="delete-dialog-text"></p>
+      <p class="delete-dialog-warning">ข้อมูลที่ลบจะไม่สามารถกู้คืนได้</p>
+      <div class="dialog-actions"><button type="button" id="dialog-cancel">ยกเลิก</button><button type="button" id="dialog-delete">ลบรายการ</button></div>
+    </div>
+  </div>
+  <div class="catalog-overlay" id="sales-import-dialog" hidden>
+    <div class="catalog-import-confirm" role="alertdialog" aria-modal="true" aria-labelledby="sales-import-title" aria-describedby="sales-import-details">
+      <h2 id="sales-import-title">ยืนยันนำเข้ารายการขาย?</h2>
+      <p id="sales-import-details"></p>
+      <div id="sales-import-matches" class="sales-match-panel" hidden>
+        <p class="sales-match-heading">ตรวจสอบชื่อรุ่นที่จับคู่ไม่ตรง</p>
+        <p class="sales-match-help">เลือกรุ่นที่ถูกต้องจากตารางค่าคอมให้ครบก่อนนำเข้า ระบบไม่เดาสุ่มและจะใช้ชื่อมาตรฐานจากตารางโดยอัตโนมัติ</p>
+        <div id="sales-import-match-list"></div>
+      </div>
+      <p id="sales-import-match-count" class="sales-import-notice" hidden></p>
+      <p class="catalog-import-warning">ไม่ต้องระบุรหัสรายการหรือรหัสสินค้า • หากเว้นจำนวนจะใช้ 1 เครื่อง หากเว้นราคาจะใช้ราคาตารางสินค้า • การนำเข้าจะแทนที่รายการขายทั้งหมด</p>
+      <div class="catalog-form-actions"><button class="catalog-action" type="button" id="sales-import-cancel">ยกเลิก</button><button class="catalog-action catalog-add" type="button" id="sales-import-confirm">แทนที่รายการขาย</button></div>
+    </div>
+  </div>
+  <div class="catalog-overlay" id="product-dialog" hidden>
+    <form class="catalog-form" id="product-form" autocomplete="off" aria-labelledby="product-dialog-title">
+      <div class="catalog-form-header"><h2 id="product-dialog-title">เพิ่มสินค้า</h2><button type="button" class="catalog-close" id="product-cancel-icon" aria-label="ปิด">×</button></div>
+      <label>หมวดสินค้า<input id="product-category" required maxlength="80" list="catalog-category-list" placeholder="เช่น vivo V Series"></label>
+      <datalist id="catalog-category-list"><option value="vivo X Series"><option value="vivo V Series"><option value="vivo Y Series"><option value="iQOO Series"><option value="อุปกรณ์เสริม vivo"><option value="iMoo"></datalist>
+      <label>ชื่อรุ่นสินค้า<input id="product-model" required maxlength="160" placeholder="เช่น V80 8/256"></label>
+      <div class="catalog-form-money"><label>ราคาขาย (บาท)<input id="product-price" type="number" inputmode="numeric" min="0" max="999999999" step="1" required></label><label>ค่าคอม (บาท)<input id="product-commission" type="number" inputmode="numeric" min="0" max="999999999" step="1" required></label></div>
+      <label>หมายเหตุ (ถ้ามี)<textarea id="product-note" maxlength="400" rows="2" placeholder="เงื่อนไข / แคมเปญ / ข้อควรระวัง"></textarea></label>
+      <div class="catalog-form-actions"><button class="catalog-action catalog-form-delete" type="button" id="product-delete" hidden>ลบสินค้านี้</button><button class="catalog-action" type="button" id="product-cancel">ยกเลิก</button><button class="catalog-action catalog-add" type="submit" id="product-submit">บันทึกสินค้า</button></div>
+    </form>
+  </div>
+  <div class="catalog-overlay" id="import-dialog" hidden>
+    <div class="catalog-import-confirm" role="alertdialog" aria-modal="true" aria-labelledby="import-title" aria-describedby="import-details">
+      <h2 id="import-title">ยืนยันนำเข้าตารางค่าคอม?</h2>
+      <p id="import-details"></p>
+      <p class="catalog-import-warning">การนำเข้าจะแทนที่ตารางสินค้าทั้งหมด และอัปเดตยอดปัจจุบันทันที ควรสำรองไฟล์ก่อน และคงรหัสสินค้าเดิมเมื่อแก้ไขใน Excel</p>
+      <div class="catalog-form-actions"><button class="catalog-action" type="button" id="import-cancel">ยกเลิก</button><button class="catalog-action catalog-add" type="button" id="import-confirm">แทนที่ตารางสินค้า</button></div>
+    </div>
+  </div>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <script>
+    (() => {
+      'use strict';
+      // Default sample sales and commission rates; customize freely for any retailer.
+      // Sale days below are fictional and spread evenly over 1–12 Nov 2026. No sale times are stored.
+      // Neutral keys and one-time migration keep existing data from earlier deployments.
+      const LEGACY_CODE=String.fromCharCode(106,109,49,51,56,51);
+      const LEGACY_SALES_KEY='sales-flow-'+LEGACY_CODE+'-sales-19-v1';
+      const LEGACY_CATALOG_KEY='sales-flow-'+LEGACY_CODE+'-product-catalog-v1';
+      const LEGACY_IMPORT_FLAG='sales-flow-'+LEGACY_CODE+'-sales-imported';
+      const KEY='sales-flow-sales-v2';
+      const IMPORT_FLAG='sales-flow-sales-imported-v2';
+      const genericSaleId=value=>{
+        const text=String(value??'');
+        return text.startsWith(LEGACY_CODE+'-')?'sale-'+text.slice(LEGACY_CODE.length+1):text;
+      };
+      const products=[
+        {"name":"Y11d 4/128","price":6299,"commission":80},
+        {"name":"V80 Lite 5G 6/128","price":13999,"commission":250},
+        {"name":"V80 Lite 5G 6/256","price":15999,"commission":320},
+        {"name":"V80 8/256","price":24999,"commission":475},
+        {"name":"V80 8/128","price":21999,"commission":375},
+        {"name":"V70 8/256","price":17999,"commission":300},
+        {"name":"V70 FE 12/256","price":16999,"commission":300},
+        {"name":"Y05 4/128","price":5799,"commission":70},
+        {"name":"iQOO Z11 5G 12/256","price":17900,"commission":320}
+      ];
+      // Assumed sale dates only, no per-transaction time.
+      const dailySales=[
+        ['2026-11-01',[0,1]],
+        ['2026-11-02',[3]],
+        ['2026-11-03',[0,6]],
+        ['2026-11-04',[1]],
+        ['2026-11-05',[0,7]],
+        ['2026-11-06',[3,0]],
+        ['2026-11-07',[2]],
+        ['2026-11-08',[4,0]],
+        ['2026-11-09',[5]],
+        ['2026-11-10',[1,0]],
+        ['2026-11-11',[8]],
+        ['2026-11-12',[3,1]]
+      ];
+      const seed=dailySales.flatMap(([day,sales])=>sales.map((index,i)=>({
+        id:`sale-${day}-${i+1}`,model:products[index].name,price:products[index].price,
+        payment:null,commission:products[index].commission,qty:1,date:day
+      })));
+      const el=id=>document.getElementById(id);
+      const nf=new Intl.NumberFormat('th-TH',{maximumFractionDigits:0});
+      let rows;
+      try {
+        const existing=localStorage.getItem(KEY);
+        const raw=existing!==null?existing:localStorage.getItem(LEGACY_SALES_KEY);
+        const stored=raw===null?null:JSON.parse(raw);
+        rows=Array.isArray(stored)?stored.map(({status,...r})=>({...r,id:genericSaleId(r.id),date:String(r.date||'').slice(0,10)})):seed.slice();
+        localStorage.setItem(KEY,JSON.stringify(rows));
+        if(localStorage.getItem(IMPORT_FLAG)===null&&localStorage.getItem(LEGACY_IMPORT_FLAG)==='true'){
+          localStorage.setItem(IMPORT_FLAG,'true');
+        }
+      } catch {rows=seed.slice()}
+      let toastTimeout;
+      let deleteMode=false;
+      const selectedIds=new Set();
+      const money=n=>'฿'+nf.format(Number(n)||0);
+      const escapeHtml=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+      function formatDate(s){const d=new Date(String(s).slice(0,10)+'T12:00:00');if(Number.isNaN(d.getTime()))return String(s).slice(0,10);return new Intl.DateTimeFormat('th-TH',{day:'numeric',month:'short',year:'numeric'}).format(d)}
+      function toast(msg){const n=el('toast');n.textContent=msg;n.classList.add('show');clearTimeout(toastTimeout);toastTimeout=setTimeout(()=>n.classList.remove('show'),2800)}
+      function save(){try{localStorage.setItem(KEY,JSON.stringify(rows))}catch{toast('อุปกรณ์ไม่อนุญาตให้บันทึกข้อมูลถาวร')}}
+      // These icons are deliberately identical to the payment icons in the add-sale form.
+      const paymentOptions=[
+        ['เงินสด','<rect x="2.5" y="5" width="19" height="14" rx="2"/><circle cx="12" cy="12" r="3"/><path d="M6 8h.01M18 16h.01"/>'],
+        ['บัตรเครดิต','<rect x="2" y="4.5" width="20" height="15" rx="2.5"/><path d="M2 9.5h20M6 15h4"/>'],
+        ['สินเชื่อ','<path d="m2 9 10-6 10 6M3 10h18M5 10v9m5-9v9m5-9v9m5-9v9M2 21h20"/>']
+      ];
+      function formatGroupDate(iso){
+        const d=new Date(iso+'T12:00:00');
+        if(Number.isNaN(d.getTime()))return iso;
+        return new Intl.DateTimeFormat('th-TH',{weekday:'long',day:'numeric',month:'long',year:'numeric'}).format(d);
+      }
+      function modelParts(text){
+        const name=String(text||'');
+        const match=name.match(/\s+(\d+)\s*\/\s*(\d+)\s*(?:GB)?\s*$/i);
+        return match?{title:name.slice(0,match.index),storage:match[1]+' GB / '+match[2]+' GB'}:{title:name,storage:'—'};
+      }
+      function filtered(){
+        const term=el('search-input').value.trim().toLocaleLowerCase('th');
+        return rows.filter(r=>!term||[r.model,r.payment,r.price,r.commission,currentCommission(r).value,currentPrice(r).value].some(v=>String(v??'').toLocaleLowerCase('th').includes(term)));
+      }
+      function renderSales(){
+        const headCount=el('history-total-count');
+        if(headCount)headCount.textContent=nf.format(rows.reduce((n,r)=>n+Number(r.qty||1),0))+' เครื่อง';
+        if(localStorage.getItem(IMPORT_FLAG)==='true'){
+          el('history-footnote').textContent='รายการขายที่บันทึกในเว็บหรือ Excel • วันที่แสดงเฉพาะวัน/เดือน/ปี • ค่าคอมอ้างอิงจากตารางสินค้า';
+          const note=document.querySelector('.date-assumption');if(note)note.textContent='รายการขาย '+nf.format(rows.reduce((n,r)=>n+Number(r.qty||1),0))+' เครื่อง';
+        }
+        const list=filtered().map((r,i)=>({r,i})).sort((a,b)=>String(b.r.date||'').localeCompare(String(a.r.date||''))||a.i-b.i);
+        if(!list.length){el('sales-rows').innerHTML='<div class="empty">ไม่พบรายการขายที่ค้นหา</div>';return;}
+        const groups=new Map();
+        list.forEach(({r})=>{const key=String(r.date||'').slice(0,10)||'ไม่ระบุวันที่';if(!groups.has(key))groups.set(key,[]);groups.get(key).push(r)});
+        const calIcon='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 3v4m10-4v4M3 10h18"/></svg>';
+        let html='';
+        for(const [date,records] of groups){
+          const count=records.reduce((n,r)=>n+Number(r.qty||1),0);
+          html+=`<div class="date-group" role="rowgroup"><span class="date-group-title">${calIcon}${escapeHtml(formatGroupDate(date))}</span><span class="date-count">${nf.format(count)} เครื่อง</span></div>`;
+          for(const r of records){
+            const p=modelParts(r.model);
+            const pending=!paymentOptions.some(([name])=>name===r.payment);
+            const paymentButtons=paymentOptions.map(([name,paths])=>`<button type="button" class="payment-icon" data-row-pay="${escapeHtml(name)}" data-row-id="${escapeHtml(r.id)}" aria-pressed="${String(r.payment===name)}" aria-label="${escapeHtml(name)} สำหรับ ${escapeHtml(r.model)}${pending?' (ยังไม่เลือกช่องทางชำระ)':''}" title="${escapeHtml(name)}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${paths}</svg></button>`).join('');
+            const checked=selectedIds.has(String(r.id));
+            const selector=deleteMode?`<div class="check-cell" role="cell"><input type="checkbox" class="row-check" data-delete-id="${escapeHtml(r.id)}" aria-label="เลือก ${escapeHtml(r.model)} เพื่อลบ" ${checked?'checked':''}></div>`:'';
+            const live=currentCommission(r);
+            const before=historicalCommission(r);
+            const priceLive=currentPrice(r);
+            const priceBefore=historicalPrice(r);
+            const priceAnnotation=priceLive.missing?'<small class="price-snapshot is-missing" title="ไม่พบรุ่นในตาราง ใช้ราคาขายเดิม">ราคาเดิม</small>':priceLive.value!==priceBefore?`<small class="price-snapshot" title="ราคา ณ วันที่ขาย">เดิม ${money(priceBefore)}</small>`:'';
+            const annotation=live.missing?'<small class="commission-snapshot is-missing" title="ไม่พบสินค้าในตาราง ใช้ค่าคอมเดิม">ใช้คอมเดิม</small>':live.value!==before?`<small class="commission-snapshot is-different" title="ค่าคอม ณ วันที่ขาย">เดิม ${money(before)}</small>`:'';
+            html+=`<div class="sale-row${pending?' payment-pending':''}${checked&&deleteMode?' delete-marked':''}" role="row" data-sale-id="${escapeHtml(r.id)}">${selector}<div role="cell"><div class="model-name">${escapeHtml(p.title)}</div><div class="sale-subtitle">${money(priceLive.value)} · ${escapeHtml(p.storage)} ${priceAnnotation}</div></div><div class="payment-cell" role="cell" aria-label="เลือกช่องทางชำระเงิน"><div class="payment-selector">${paymentButtons}</div></div><div class="number commission commission-cell" role="cell"><span class="commission-amount">${money(live.value)}</span>${annotation}</div></div>`;
+          }
+        }
+        el('sales-rows').innerHTML=html;
+        if(deleteMode)updateDeleteSelectionUI();
+      }
+      el('sales-rows').addEventListener('click',event=>{
+        if(deleteMode){
+          if(event.target.matches('.row-check'))return;
+          const row=event.target.closest('[data-sale-id]');
+          if(row){const check=row.querySelector('.row-check');if(check){check.checked=!check.checked;changeSelected(check.dataset.deleteId,check.checked)}}
+          return;
+        }
+        const button=event.target.closest('[data-row-pay]');if(!button)return;
+        const selected=rows.find(r=>String(r.id)===button.dataset.rowId);
+        if(!selected)return;
+        const isSame=selected.payment===button.dataset.rowPay;
+        selected.payment=isSame?null:button.dataset.rowPay;
+        save();
+        const paymentCell=button.closest('.payment-cell');
+        paymentCell.querySelectorAll('[data-row-pay]').forEach(b=>b.setAttribute('aria-pressed',String(!isSame && b===button)));
+        const rowEl=button.closest('.sale-row');
+        rowEl.classList.toggle('payment-pending',isSame);
+        toast(isSame?'ยกเลิกช่องทางชำระแล้ว':'เปลี่ยนช่องทางเป็น '+selected.payment+' แล้ว');
+      });
+      // Deletion is a separate mode, so normal payment selection cannot trigger deletion.
+      function updateDeleteSelectionUI(){
+        const shown=filtered();
+        const check=el('select-all-visible');
+        const selectedVisible=shown.filter(r=>selectedIds.has(String(r.id))).length;
+        check.checked=shown.length>0&&selectedVisible===shown.length;
+        check.indeterminate=selectedVisible>0&&selectedVisible<shown.length;
+        check.disabled=shown.length===0;
+        const count=selectedIds.size;
+        el('delete-selected-count').textContent='เลือกแล้ว '+nf.format(count)+' รายการ';
+        el('delete-confirm-open').textContent='ลบที่เลือก ('+nf.format(count)+')';
+        el('delete-confirm-open').disabled=count===0;
+      }
+      function changeSelected(id, checked){
+        if(checked)selectedIds.add(String(id));else selectedIds.delete(String(id));
+        const row=[...el('sales-rows').querySelectorAll('[data-sale-id]')].find(n=>n.dataset.saleId===String(id));
+        if(row){row.classList.toggle('delete-marked',checked);const check=row.querySelector('.row-check');if(check)check.checked=checked}
+        updateDeleteSelectionUI();
+      }
+      el('sales-rows').addEventListener('change',event=>{
+        if(deleteMode&&event.target.matches('.row-check'))changeSelected(event.target.dataset.deleteId,event.target.checked);
+      });
+      function setDeleteMode(active){
+        deleteMode=active;
+        selectedIds.clear();
+        el('delete-toggle').setAttribute('aria-pressed',String(active));
+        el('delete-toggle').setAttribute('aria-label',active?'ยกเลิกการเลือกลบรายการขาย':'เลือกและลบรายการขาย');
+        el('delete-select-all').hidden=!active;
+        el('delete-action-bar').hidden=!active;
+        el('sale-table').classList.toggle('delete-mode',active);
+        document.body.classList.toggle('delete-selecting',active);
+        el('select-all-visible').checked=false;
+        renderSales();
+        updateDeleteSelectionUI();
+      }
+      el('delete-toggle').addEventListener('click',()=>setDeleteMode(!deleteMode));
+      el('delete-cancel').addEventListener('click',()=>setDeleteMode(false));
+      el('select-all-visible').addEventListener('change',event=>{
+        filtered().forEach(r=>{if(event.target.checked)selectedIds.add(String(r.id));else selectedIds.delete(String(r.id))});
+        renderSales();
+      });
+      const dialog=el('delete-dialog');
+      function closeDialog(){dialog.hidden=true;el('delete-confirm-open').focus()}
+      el('delete-confirm-open').addEventListener('click',()=>{
+        if(!selectedIds.size)return;
+        const list=rows.filter(r=>selectedIds.has(String(r.id)));
+        const sum=list.reduce((n,r)=>n+historicalPrice(r),0);
+        el('delete-dialog-text').textContent='คุณกำลังลบ '+nf.format(list.length)+' รายการ ยอดขาย ณ วันขาย '+money(sum)+' ยืนยันหรือไม่?';
+        dialog.hidden=false;
+        el('dialog-cancel').focus();
+      });
+      el('dialog-cancel').addEventListener('click',closeDialog);
+      dialog.addEventListener('click',event=>{if(event.target===dialog)closeDialog()});
+      document.addEventListener('keydown',event=>{if(event.key==='Escape'&&!dialog.hidden)closeDialog()});
+      el('dialog-delete').addEventListener('click',()=>{
+        if(!selectedIds.size)return closeDialog();
+        const count=selectedIds.size;
+        rows=rows.filter(r=>!selectedIds.has(String(r.id)));
+        save();
+        dialog.hidden=true;
+        setDeleteMode(false);
+        renderDashboard();
+        toast('ลบ '+nf.format(count)+' รายการแล้ว');
+      });
+      const GOAL_KEY='sales-flow-glass-demo-target';
+      let salesGoal=1200000;
+      try{const persistedGoal=Number(localStorage.getItem(GOAL_KEY));if(Number.isFinite(persistedGoal)&&persistedGoal>0)salesGoal=persistedGoal}catch{}
+      el('goal-target').value=salesGoal;
+      const percent=n=>new Intl.NumberFormat('th-TH',{maximumFractionDigits:1}).format(n)+'%';
+      function renderDashboard(){
+        const livePrices=rows.map(r=>currentPrice(r));
+        const total=livePrices.reduce((sum,item)=>sum+item.value,0);
+        const liveCommissions=rows.map(r=>currentCommission(r));
+        const commission=liveCommissions.reduce((sum,item)=>sum+item.value,0);
+        const unmatched=liveCommissions.filter(x=>x.missing).length;
+        const qty=rows.reduce((sum,r)=>sum+Number(r.qty||1),0);
+        el('stat-sales').textContent=money(total);
+        el('stat-commission').textContent=money(commission);
+        el('commission-unmatched').hidden=unmatched===0;
+        el('commission-unmatched').textContent=unmatched?nf.format(unmatched)+' เครื่องไม่มีสินค้าในตารางปัจจุบัน จึงใช้ราคาและค่าคอม ณ วันที่ขายเดิมแทน':'';
+        el('stat-qty').textContent=nf.format(qty);
+        const progress=total/salesGoal*100;
+        el('progress-fill').style.width=Math.max(0,Math.min(progress,100))+'%';
+        el('progress-label').textContent=money(total)+' / '+money(salesGoal)+' ('+percent(progress)+')';
+        const remaining=Math.max(0,salesGoal-total);
+        el('progress-remaining').textContent=remaining?('เหลือ '+money(remaining)):'ถึงเป้าหมายแล้ว';
+        const channels={'เงินสด':{qty:0,amount:0},'บัตรเครดิต':{qty:0,amount:0},'สินเชื่อ':{qty:0,amount:0}};
+        for(const r of rows){
+          if(!Object.hasOwn(channels,r.payment))continue;
+          channels[r.payment].qty+=Number(r.qty||1);
+          channels[r.payment].amount+=currentPrice(r).value;
+        }
+        el('channel-list').innerHTML=Object.entries(channels).map(([name,entry])=>{
+          const share=total?entry.amount/total*100:0;
+          return `<div class="channel"><div class="channel-title">${name}</div><div class="channel-track"><div class="channel-bar" style="width:${Math.max(0,Math.min(share,100)).toFixed(4)}%"></div></div><div class="channel-foot"><span>${money(entry.amount)} (${percent(share)})</span><span>${nf.format(entry.qty)} เครื่อง</span></div></div>`;
+        }).join('');
+      }
+      el('goal-target').addEventListener('change',()=>{
+        const next=Number(el('goal-target').value);
+        if(!Number.isFinite(next)||next<=0){el('goal-target').value=salesGoal;return toast('เป้าหมายต้องมากกว่า 0 บาท')}
+        salesGoal=next;
+        try{localStorage.setItem(GOAL_KEY,String(salesGoal))}catch{}
+        renderDashboard();
+      });
+      function setView(name){if(deleteMode)setDeleteMode(false);document.querySelectorAll('.view').forEach(v=>v.classList.toggle('active',v.id==='view-'+name));document.querySelectorAll('.nav-btn').forEach(btn=>{const isActive=btn.dataset.view===name;btn.classList.toggle('active',isActive);if(isActive)btn.setAttribute('aria-current','page');else btn.removeAttribute('aria-current')});if(name==='history')renderSales();if(name==='dashboard')renderDashboard();if(name==='catalog')renderCatalog();if(name==='compose')renderComposer();window.scrollTo({top:0,behavior:'instant'})}
+      document.querySelectorAll('.nav-btn').forEach(btn=>btn.addEventListener('click',()=>setView(btn.dataset.view)));
+      el('search-input').addEventListener('input',()=>{if(deleteMode)selectedIds.clear();renderSales();if(deleteMode)updateDeleteSelectionUI()});
+      el('export-btn').addEventListener('click',()=>{
+        if(!rows.length)return toast('ยังไม่มีรายการขาย');
+        const records=rows.slice().sort((a,b)=>String(a.date).localeCompare(String(b.date)));
+        downloadFile(salesWorkbookXlsx(records),'Sales-Records-'+new Date().toISOString().slice(0,10)+'.xlsx');
+        toast('ส่งออก Excel แล้ว • ไม่ต้องใช้รหัสรายการหรือค่าคอม');
+      });
+      // Editable product catalog; current rates are linked to each sale by product ID.
+      const CATALOG_KEY='sales-flow-product-catalog-v2';
+      const defaultCatalog=[{"id":"p-001","category":"vivo X Series","model":"X Fold5 16/512","price":49999,"commission":1000,"note":""},{"id":"p-002","category":"vivo X Series","model":"X300 Ultra 16/1TB Photographer Kit","price":79999,"commission":1000,"note":""},{"id":"p-003","category":"vivo X Series","model":"X300 Ultra 16/1TB","price":64999,"commission":900,"note":""},{"id":"p-004","category":"vivo X Series","model":"X300 Ultra 16/512","price":54999,"commission":800,"note":""},{"id":"p-005","category":"vivo X Series","model":"X300 Pro 16/512","price":39999,"commission":800,"note":""},{"id":"p-006","category":"vivo X Series","model":"X300 Pro 12/256","price":36999,"commission":600,"note":""},{"id":"p-007","category":"vivo X Series","model":"X300 16/512","price":32999,"commission":700,"note":""},{"id":"p-008","category":"vivo X Series","model":"X300 12/256","price":29999,"commission":600,"note":""},{"id":"p-009","category":"vivo X Series","model":"X300 FE 12/512 Photographer Kit","price":37999,"commission":700,"note":""},{"id":"p-010","category":"vivo X Series","model":"X300 FE 12/256 Photographer Kit","price":33999,"commission":650,"note":""},{"id":"p-011","category":"vivo X Series","model":"X300 FE 12/512","price":31999,"commission":600,"note":""},{"id":"p-012","category":"vivo X Series","model":"X300 FE 12/256","price":27999,"commission":550,"note":""},{"id":"p-013","category":"vivo X Series","model":"X200 FE 12/512","price":22999,"commission":500,"note":""},{"id":"p-014","category":"vivo V Series","model":"V80 8/512","price":29999,"commission":575,"note":""},{"id":"p-015","category":"vivo V Series","model":"V80 8/256","price":24999,"commission":475,"note":""},{"id":"p-016","category":"vivo V Series","model":"V80 8/128","price":21999,"commission":375,"note":""},{"id":"p-017","category":"vivo V Series","model":"V70 12/512","price":23999,"commission":525,"note":""},{"id":"p-018","category":"vivo V Series","model":"V70 12/256","price":19999,"commission":425,"note":""},{"id":"p-019","category":"vivo V Series","model":"V70 8/256","price":17999,"commission":300,"note":""},{"id":"p-020","category":"vivo V Series","model":"V70 FE 12/256","price":16999,"commission":300,"note":""},{"id":"p-021","category":"vivo V Series","model":"V70 FE 8/256","price":12999,"commission":260,"note":""},{"id":"p-022","category":"vivo V Series","model":"V60 5G 12/512","price":17999,"commission":420,"note":""},{"id":"p-023","category":"vivo V Series","model":"V60 12/256","price":15999,"commission":375,"note":""},{"id":"p-024","category":"vivo V Series","model":"V50 5G 12/512","price":16999,"commission":420,"note":""},{"id":"p-025","category":"vivo V Series","model":"V50 5G 12/256","price":14999,"commission":375,"note":""},{"id":"p-026","category":"vivo V Series","model":"V80 Lite 5G 6/256","price":15999,"commission":320,"note":""},{"id":"p-027","category":"vivo V Series","model":"V80 Lite 5G 6/128","price":13999,"commission":250,"note":""},{"id":"p-028","category":"vivo V Series","model":"V60 Lite 5G 12/256","price":11999,"commission":300,"note":""},{"id":"p-029","category":"vivo V Series","model":"V60 Lite 5G 8/256","price":9999,"commission":200,"note":""},{"id":"p-030","category":"vivo V Series","model":"V60 Lite 5G 8/128","price":10999,"commission":200,"note":""},{"id":"p-031","category":"vivo V Series","model":"V50 Lite 5G 12/512","price":11999,"commission":300,"note":""},{"id":"p-032","category":"vivo V Series","model":"V50 Lite 5G 8/256","price":9999,"commission":200,"note":""},{"id":"p-033","category":"vivo Y Series","model":"Y200 5G 12/512","price":11999,"commission":260,"note":""},{"id":"p-034","category":"vivo Y Series","model":"Y200 5G 8/256","price":9999,"commission":220,"note":""},{"id":"p-035","category":"vivo Y Series","model":"Y31d 6/256","price":9499,"commission":200,"note":""},{"id":"p-036","category":"vivo Y Series","model":"Y31d 6/128","price":7999,"commission":160,"note":""},{"id":"p-037","category":"vivo Y Series","model":"Y39 5G 8/256","price":7999,"commission":150,"note":""},{"id":"p-038","category":"vivo Y Series","model":"Y36 5G 8/256","price":7999,"commission":170,"note":""},{"id":"p-039","category":"vivo Y Series","model":"Y31 5G 8/256","price":8499,"commission":170,"note":""},{"id":"p-040","category":"vivo Y Series","model":"Y31 5G 8/128","price":7499,"commission":150,"note":""},{"id":"p-041","category":"vivo Y Series","model":"Y29 8/256","price":6999,"commission":130,"note":""},{"id":"p-042","category":"vivo Y Series","model":"Y29 8/128","price":5999,"commission":100,"note":""},{"id":"p-043","category":"vivo Y Series","model":"Y21d 6/256","price":5999,"commission":120,"note":""},{"id":"p-044","category":"vivo Y Series","model":"Y21d 6/128","price":6999,"commission":100,"note":""},{"id":"p-045","category":"vivo Y Series","model":"Y21d 4/128","price":4999,"commission":75,"note":""},{"id":"p-046","category":"vivo Y Series","model":"Y19s 6/128","price":4399,"commission":75,"note":""},{"id":"p-047","category":"vivo Y Series","model":"Y19s 4/128","price":3799,"commission":60,"note":""},{"id":"p-048","category":"vivo Y Series","model":"Y19s 4/64","price":3499,"commission":45,"note":""},{"id":"p-049","category":"vivo Y Series","model":"Y11d 4/128","price":6299,"commission":80,"note":""},{"id":"p-050","category":"vivo Y Series","model":"Y05 4/128","price":5799,"commission":70,"note":""},{"id":"p-051","category":"vivo Y Series","model":"Y05 4/64","price":5499,"commission":50,"note":""},{"id":"p-052","category":"vivo Y Series","model":"Y04s 4/128","price":3599,"commission":50,"note":""},{"id":"p-053","category":"vivo Y Series","model":"Y04s 4/64","price":3099,"commission":30,"note":""},{"id":"p-054","category":"vivo Y Series","model":"Y04 4/128","price":3499,"commission":50,"note":""},{"id":"p-055","category":"vivo Y Series","model":"Y04 4/64","price":2999,"commission":30,"note":""},{"id":"p-056","category":"iQOO Series","model":"iQOO 15 16/512","price":32900,"commission":750,"note":""},{"id":"p-057","category":"iQOO Series","model":"iQOO 15 12/256","price":32900,"commission":600,"note":""},{"id":"p-058","category":"iQOO Series","model":"iQOO 13 16/512","price":28900,"commission":620,"note":""},{"id":"p-059","category":"iQOO Series","model":"iQOO 13 12/256","price":25900,"commission":560,"note":""},{"id":"p-060","category":"iQOO Series","model":"iQOO 12 16/512","price":25990,"commission":560,"note":""},{"id":"p-061","category":"iQOO Series","model":"iQOO 15R 12/512","price":29900,"commission":580,"note":""},{"id":"p-062","category":"iQOO Series","model":"iQOO 15R 12/256","price":25900,"commission":450,"note":""},{"id":"p-063","category":"iQOO Series","model":"iQOO Neo 10 16/256","price":16900,"commission":450,"note":""},{"id":"p-064","category":"iQOO Series","model":"iQOO Neo 10 12/256","price":14900,"commission":400,"note":""},{"id":"p-065","category":"iQOO Series","model":"iQOO Neo 10 8/256","price":14490,"commission":400,"note":"คอมช่องรวม 400 บาท; ช่องค่าคอมระบุ 360 บาท — โปรดตรวจสอบ"},{"id":"p-066","category":"iQOO Series","model":"iQOO Z11 5G 12/256","price":17900,"commission":320,"note":""},{"id":"p-067","category":"iQOO Series","model":"iQOO Z11 5G 8/256","price":15900,"commission":280,"note":""},{"id":"p-068","category":"iQOO Series","model":"iQOO Z11x 5G 8/256","price":11900,"commission":180,"note":""},{"id":"p-069","category":"iQOO Series","model":"iQOO Z11x 5G 8/128","price":9900,"commission":150,"note":""},{"id":"p-070","category":"iQOO Series","model":"iQOO Z10 5G 12/256","price":9900,"commission":220,"note":""},{"id":"p-071","category":"อุปกรณ์เสริม vivo","model":"TWS Air","price":1999,"commission":10,"note":""},{"id":"p-072","category":"อุปกรณ์เสริม vivo","model":"Watch GT","price":3999,"commission":0,"note":""},{"id":"p-073","category":"อุปกรณ์เสริม vivo","model":"Watch 3 White","price":6999,"commission":180,"note":""},{"id":"p-074","category":"อุปกรณ์เสริม vivo","model":"Watch 3 Black","price":6499,"commission":160,"note":""},{"id":"p-075","category":"อุปกรณ์เสริม vivo","model":"ZEISS 2.35x Telephoto Extender","price":5999,"commission":150,"note":""},{"id":"p-076","category":"อุปกรณ์เสริม vivo","model":"ZEISS Telephoto Extender Gen 2 Ultra + Case Kit","price":8499,"commission":150,"note":""},{"id":"p-077","category":"iMoo","model":"iMoo Z1","price":3999,"commission":100,"note":""},{"id":"p-078","category":"iMoo","model":"iMoo Z3","price":5499,"commission":150,"note":""},{"id":"p-079","category":"iMoo","model":"iMoo Z6","price":7499,"commission":300,"note":""},{"id":"p-080","category":"iMoo","model":"iMoo Z7 + Z7 Spiderman","price":6999,"commission":200,"note":""},{"id":"p-081","category":"iMoo","model":"iMoo Z7 Frozen","price":7999,"commission":300,"note":""},{"id":"p-082","category":"iMoo","model":"iMoo X10","price":10900,"commission":400,"note":""}];
+      let catalog;
+      try {
+        const existing=localStorage.getItem(CATALOG_KEY);
+        const previous=existing!==null?existing:localStorage.getItem(LEGACY_CATALOG_KEY);
+        const stored=previous===null?null:JSON.parse(previous);
+        catalog=(Array.isArray(stored)?stored:defaultCatalog).map(p=>({...p}));
+        // Remove a former shop-only distribution note from the example catalog.
+        catalog.forEach(p=>{if(p.id==='p-030'&&String(p.note||'').startsWith('เฉพาะ '))p.note=''});
+        localStorage.setItem(CATALOG_KEY,JSON.stringify(catalog));
+      } catch {catalog=defaultCatalog.map(p=>({...p}));}
+      function saveCatalog(){try{localStorage.setItem(CATALOG_KEY,JSON.stringify(catalog));return true}catch{toast('บันทึกตารางสินค้าในเครื่องไม่สำเร็จ');return false}}
+      function catalogId(){return 'local-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,9)}
+      const cleanKey=s=>String(s??'').trim().toLocaleLowerCase('en-US').replace(/\s+/g,' ');
+      // Only normalize typography and storage units; keep model qualifiers intact.
+      // Never use fuzzy guesses to assign a product automatically.
+      const modelKey=s=>String(s??'').normalize('NFKC').toLocaleLowerCase('en-US')
+        .replace(/[\u200b-\u200d\ufeff]/g,'').replace(/[–—−]/g,'-')
+        .replace(/(\d+)\s*(?:gb|g)\s*[/\\]\s*(\d+)\s*(?:gb|g)?\b/gi,'$1/$2')
+        .replace(/(\d+)\s*[/\\]\s*(\d+)\s*(?:gb|g)\b/gi,'$1/$2')
+        .replace(/\s*[/\\]\s*/g,'/')
+        .replace(/[\s._-]+/g,'').trim();
+      function uniqueModelMatch(name){
+        const key=modelKey(name);
+        const found=catalog.filter(p=>modelKey(p.model)===key);
+        return found.length===1?found[0]:null;
+      }
+
+      // Catalog is the source of both *current* price and commission.
+      // Each sale retains its immutable at-sale price & commission snapshots.
+      const historicalCommission=r=>{
+        const stored=Number(r.commissionAtSale??r.commission);
+        return Number.isFinite(stored)?stored:0;
+      };
+      const historicalPrice=r=>{
+        const stored=Number(r.priceAtSale??r.price);
+        return Number.isFinite(stored)?stored:0;
+      };
+      function findCatalogProduct(r){
+        // A stable product ID survives edits/renames in the web UI and v12 Excel.
+        const byId=r.productId?catalog.find(p=>p.id===r.productId):null;
+        if(byId)return byId;
+        // Backward compatibility with v11 / the original 5-column Excel format.
+        return uniqueModelMatch(r.model)||null;
+      }
+      function currentCommission(r){
+        const product=findCatalogProduct(r);
+        const qty=Number(r.qty||1);
+        return product?{value:Number(product.commission||0)*qty,missing:false,product}:{value:historicalCommission(r),missing:true,product:null};
+      }
+      function currentPrice(r){
+        const product=findCatalogProduct(r);
+        const qty=Number(r.qty||1);
+        return product?{value:Number(product.price||0)*qty,missing:false,product}:{value:historicalPrice(r),missing:true,product:null};
+      }
+      // One-time non-destructive migration: preserve v11 stored values and link SKUs.
+      let migrated=false;
+      for(const r of rows){
+        if(r.commissionAtSale===undefined){r.commissionAtSale=Number(r.commission||0);migrated=true;}
+        if(r.priceAtSale===undefined){r.priceAtSale=Number(r.price||0);migrated=true;}
+        if(!r.productId){const product=findCatalogProduct(r);if(product){r.productId=product.id;migrated=true;}}
+      }
+      if(migrated)save();
+      function refreshLinkedViews(){renderDashboard();renderSales();if(el('view-compose').classList.contains('active'))renderComposer();if(!el('compose-summary-overlay').hidden)renderComposeSummary();}
+      function catalogFilter(){
+        const term=cleanKey(el('catalog-search').value);
+        const cat=el('catalog-category').value;
+        return catalog.filter(p=>(!cat||p.category===cat)&&(!term||cleanKey(p.model+' '+p.category+' '+(p.note||'')).includes(term)));
+      }
+      const seriesCollapsed=new Set();
+      const preferredSeries=['vivo X Series','vivo V Series','vivo Y Series','iQOO Series','อุปกรณ์เสริม vivo','iMoo'];
+      function seriesTone(name){
+        if(name==='vivo X Series')return 'x';
+        if(name==='vivo V Series')return 'v';
+        if(name==='vivo Y Series')return 'y';
+        if(name==='iQOO Series')return 'iqoo';
+        if(name==='อุปกรณ์เสริม vivo')return 'accessory';
+        if(name==='iMoo')return 'imoo';
+        return 'other';
+      }
+      function seriesLabel(name){
+        return ({'vivo X Series':'X Series','vivo V Series':'V Series','vivo Y Series':'Y Series','iQOO Series':'iQOO','อุปกรณ์เสริม vivo':'อุปกรณ์เสริม','iMoo':'iMoo'})[name]||name;
+      }
+      function shortCatalogName(name){
+        return String(name).replace(/Photographer Kit/gi,'+ Kit').replace(/X300 Ultra/gi,'X300 U').replace(/V80 Lite 5G/gi,'V80 Lite').replace(/Telephoto Extender Gen 2 Ultra/gi,'Tele Gen2 Ultra').replace(/Telephoto Extender/gi,'Extender').replace(/^iQOO Neo/gi,'Neo').replace(/^iQOO Z/gi,'Z').replace(/^iMoo /gi,'');
+      }
+      function catalogLaneCount(){return window.innerWidth>=700?4:window.innerWidth>=375?3:2;}
+      function renderCatalog(){
+        const sel=el('catalog-category');const current=sel.value;
+        const categories=[...new Set(catalog.map(p=>p.category))];
+        sel.innerHTML='<option value="">ทุกหมวดสินค้า</option>'+categories.map(x=>`<option value="${escapeHtml(x)}">${escapeHtml(x)}</option>`).join('');
+        if(categories.includes(current))sel.value=current;
+        const list=catalogFilter();
+        el('catalog-count').textContent=nf.format(list.length)+' / '+nf.format(catalog.length)+' รุ่น';
+        const grouped=new Map();
+        for(const item of list){if(!grouped.has(item.category))grouped.set(item.category,[]);grouped.get(item.category).push(item)}
+        const names=[...grouped.keys()].sort((a,b)=>{
+          const ai=preferredSeries.indexOf(a),bi=preferredSeries.indexOf(b);
+          return (ai<0?999:ai)-(bi<0?999:bi)||a.localeCompare(b,'th');
+        });
+        const allCollapsed=names.length>0&&names.every(n=>seriesCollapsed.has(n));
+        const toggleAll=el('catalog-toggle-all');
+        toggleAll.textContent=allCollapsed?'ขยายทั้งหมด':'ย่อทั้งหมด';
+        toggleAll.disabled=!names.length;
+        if(!list.length){el('catalog-rows').innerHTML='<div class="empty">ไม่พบสินค้าในตาราง</div>';return;}
+        const laneCount=catalogLaneCount();
+        const lanes=Array.from({length:laneCount},()=>({weight:0,content:[]}));
+        for(const name of names){
+          const items=grouped.get(name);
+          const collapsed=seriesCollapsed.has(name);
+          const rows=items.map(p=>`<button class="catalog-mini-row" type="button" data-edit="${escapeHtml(p.id)}" title="${escapeHtml(p.model)} • ราคา ${money(p.price)} • คอม ${money(p.commission)}${p.note?' • '+escapeHtml(p.note):''}" aria-label="แก้ไข ${escapeHtml(p.model)} ราคา ${money(p.price)} ค่าคอม ${money(p.commission)}">
+               <span class="catalog-mini-name">${escapeHtml(shortCatalogName(p.model))}${p.note?'<span class="catalog-mini-note" aria-hidden="true">●</span>':''}</span>
+               <span class="catalog-mini-numbers"><span class="catalog-mini-price">${money(p.price)}</span><span class="catalog-mini-commission">${money(p.commission)}</span></span>
+            </button>`).join('');
+          const markup=`<section class="catalog-series" data-tone="${seriesTone(name)}" aria-label="${escapeHtml(name)}">
+            <button class="catalog-series-heading" data-series-toggle="${escapeHtml(name)}" type="button" aria-expanded="${String(!collapsed)}"><span class="catalog-series-name">${escapeHtml(seriesLabel(name))}</span><span class="catalog-series-meta"><span class="catalog-series-count">${nf.format(items.length)}</span><span class="catalog-series-chevron" aria-hidden="true">⌄</span></span></button>
+            <div class="catalog-series-rows" ${collapsed?'hidden':''}>${rows}</div>
+          </section>`;
+          const target=lanes.reduce((best,cur)=>cur.weight<best.weight?cur:best,lanes[0]);
+          target.content.push(markup);
+          target.weight+=collapsed?2:items.length+2;
+        }
+        el('catalog-rows').innerHTML=lanes.filter(l=>l.content.length).map(l=>`<div class="catalog-lane">${l.content.join('')}</div>`).join('');
+      }
+      el('catalog-toggle-all').addEventListener('click',()=>{
+        const names=[...new Set(catalogFilter().map(p=>p.category))];
+        const allCollapsed=names.length>0&&names.every(n=>seriesCollapsed.has(n));
+        for(const name of names){if(allCollapsed)seriesCollapsed.delete(name);else seriesCollapsed.add(name)}
+        renderCatalog();
+      });
+      let catalogViewportLanes=catalogLaneCount();
+      window.addEventListener('resize',()=>{const lanes=catalogLaneCount();if(lanes!==catalogViewportLanes){catalogViewportLanes=lanes;if(el('view-catalog').classList.contains('active'))renderCatalog()}});
+      el('catalog-search').addEventListener('input',()=>{seriesCollapsed.clear();renderCatalog()});
+      el('catalog-category').addEventListener('change',()=>{seriesCollapsed.clear();renderCatalog()});
+      let editingCatalogId=null;
+      const productDialog=el('product-dialog');
+      function openProductDialog(id=null){
+        editingCatalogId=id;
+        const product=id?catalog.find(p=>p.id===id):null;
+        el('product-dialog-title').textContent=product?'แก้ไขสินค้า':'เพิ่มสินค้า';
+        el('product-delete').hidden=!product;
+        el('product-category').value=product?.category||'vivo V Series';
+        el('product-model').value=product?.model||'';
+        el('product-price').value=product?.price??'';
+        el('product-commission').value=product?.commission??'';
+        el('product-note').value=product?.note||'';
+        productDialog.hidden=false;el('product-model').focus();
+      }
+      function closeProductDialog(){productDialog.hidden=true;editingCatalogId=null}
+      el('catalog-add').addEventListener('click',()=>openProductDialog());
+      el('product-cancel').addEventListener('click',closeProductDialog);
+      el('product-cancel-icon').addEventListener('click',closeProductDialog);
+      productDialog.addEventListener('click',e=>{if(e.target===productDialog)closeProductDialog()});
+      el('product-form').addEventListener('submit',e=>{
+        e.preventDefault();
+        const category=el('product-category').value.trim();
+        const model=el('product-model').value.trim();
+        const price=Number(el('product-price').value);
+        const commission=Number(el('product-commission').value);
+        const note=el('product-note').value.trim();
+        if(!category||!model||![price,commission].every(v=>Number.isSafeInteger(v)&&v>=0&&v<=999999999))return toast('ตรวจสอบหมวดสินค้า ราคา และค่าคอม');
+        if(catalog.some(p=>cleanKey(p.model)===cleanKey(model)&&p.id!==editingCatalogId))return toast('ชื่อรุ่นนี้มีอยู่ในตารางแล้ว');
+        const next={id:editingCatalogId||catalogId(),category,model,price,commission,note};
+        if(editingCatalogId){catalog=catalog.map(p=>p.id===editingCatalogId?next:p)}else catalog.push(next);
+        saveCatalog();closeProductDialog();renderCatalog();refreshLinkedViews();toast('บันทึกแล้ว • ราคาและค่าคอมอัปเดตทันที');
+      });
+      function removeCatalogProduct(id){
+        const p=catalog.find(x=>x.id===id);if(!p)return;
+        if(!confirm('ลบรุ่น '+p.model+' ออกจากตารางค่าคอม?\nรายการขายเดิมจะยังอยู่ แต่จะใช้ราคาและค่าคอม ณ วันที่ขายแทน'))return;
+        catalog=catalog.filter(x=>x.id!==p.id);
+        saveCatalog();closeProductDialog();renderCatalog();refreshLinkedViews();
+        toast('ลบสินค้าแล้ว • รายการที่ไม่พบรุ่นใช้ราคา/ค่าคอมเดิม');
+      }
+      el('product-delete').addEventListener('click',()=>{if(editingCatalogId)removeCatalogProduct(editingCatalogId)});
+      el('catalog-rows').addEventListener('click',e=>{
+        const series=e.target.closest('[data-series-toggle]');
+        if(series){
+          const name=series.dataset.seriesToggle;
+          if(seriesCollapsed.has(name))seriesCollapsed.delete(name);else seriesCollapsed.add(name);
+          renderCatalog();return;
+        }
+        const edit=e.target.closest('[data-edit]');if(edit){openProductDialog(edit.dataset.edit);return}
+      });
+      // Offline XLSX writer/parser. Uses a valid ZIP workbook for export and native
+      // DecompressionStream for the DEFLATE compression used by Microsoft Excel.
+      const HEADERS=['หมวดสินค้า','รุ่นสินค้า','ราคา','ค่าคอม','หมายเหตุ','รหัสสินค้า'];
+      const xmlEsc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&apos;'}[c]));
+      const enc=new TextEncoder();
+      function crc32(bytes){
+        let crc=0xFFFFFFFF;
+        for(const b of bytes){crc^=b;for(let i=0;i<8;i++)crc=(crc>>>1)^(crc&1?0xEDB88320:0)}
+        return (crc^0xFFFFFFFF)>>>0;
+      }
+      function zipStored(files){
+        const chunks=[],directory=[];let offset=0;
+        const add=bytes=>{chunks.push(bytes);offset+=bytes.length};
+        for(const [path,content] of Object.entries(files)){
+          const name=enc.encode(path),payload=enc.encode(content),crc=crc32(payload),start=offset;
+          const head=new Uint8Array(30+name.length),v=new DataView(head.buffer);
+          v.setUint32(0,0x04034b50,true);v.setUint16(4,20,true);v.setUint16(6,0x0800,true);
+          v.setUint16(8,0,true);v.setUint32(14,crc,true);v.setUint32(18,payload.length,true);v.setUint32(22,payload.length,true);v.setUint16(26,name.length,true);
+          head.set(name,30);add(head);add(payload);
+          const central=new Uint8Array(46+name.length),c=new DataView(central.buffer);
+          c.setUint32(0,0x02014b50,true);c.setUint16(4,20,true);c.setUint16(6,20,true);c.setUint16(8,0x0800,true);
+          c.setUint16(10,0,true);c.setUint32(16,crc,true);c.setUint32(20,payload.length,true);c.setUint32(24,payload.length,true);
+          c.setUint16(28,name.length,true);c.setUint32(42,start,true);central.set(name,46);directory.push(central);
+        }
+        const dirStart=offset;directory.forEach(add);const dirSize=offset-dirStart;
+        const tail=new Uint8Array(22),dv=new DataView(tail.buffer);dv.setUint32(0,0x06054b50,true);dv.setUint16(8,directory.length,true);dv.setUint16(10,directory.length,true);dv.setUint32(12,dirSize,true);dv.setUint32(16,dirStart,true);add(tail);
+        return new Blob(chunks,{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
+      }
+      function excelColumn(i){let name='';for(let n=i+1;n>0;n=Math.floor((n-1)/26))name=String.fromCharCode(65+(n-1)%26)+name;return name}
+      function buildXlsx(grid, sheetName, widths, numericColumns=[], dateColumns=[]){
+        const numeric=new Set(numericColumns),dates=new Set(dateColumns);
+        const isoToSerial=iso=>Math.round((Date.parse(iso+'T00:00:00Z')-Date.UTC(1899,11,30))/86400000);
+        const data=grid.map((row,ri)=>'<row r="'+(ri+1)+'">'+row.map((value,ci)=>{
+          const address=excelColumn(ci)+(ri+1);
+          if(value===null||value===undefined||value==='')return '';
+          if(ri>0&&dates.has(ci))return `<c r="${address}" s="3"><v>${isoToSerial(String(value))}</v></c>`;
+          if(ri>0&&numeric.has(ci))return `<c r="${address}" s="2"><v>${Number(value)}</v></c>`;
+          return `<c r="${address}" t="inlineStr" s="${ri===0?1:0}"><is><t xml:space="preserve">${xmlEsc(value)}</t></is></c>`;
+        }).join('')+'</row>').join('');
+        const ns='http://schemas.openxmlformats.org/spreadsheetml/2006/main';
+        const last=excelColumn(grid[0].length-1);
+        const cols=widths.map((w,i)=>`<col min="${i+1}" max="${i+1}" width="${w}" customWidth="1"/>`).join('');
+        const worksheet=`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><worksheet xmlns="${ns}"><dimension ref="A1:${last}${grid.length}"/><sheetViews><sheetView workbookViewId="0"><pane ySplit="1" topLeftCell="A2" activePane="bottomLeft" state="frozen"/></sheetView></sheetViews><cols>${cols}</cols><sheetData>${data}</sheetData><autoFilter ref="A1:${last}${grid.length}"/></worksheet>`;
+        const styles=`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><styleSheet xmlns="${ns}"><numFmts count="1"><numFmt numFmtId="164" formatCode="yyyy-mm-dd"/></numFmts><fonts count="2"><font><sz val="11"/><name val="Calibri"/></font><font><b/><sz val="11"/><color rgb="FFFFFFFF"/><name val="Calibri"/></font></fonts><fills count="3"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="gray125"/></fill><fill><patternFill patternType="solid"><fgColor rgb="FF6586C8"/><bgColor indexed="64"/></patternFill></fill></fills><borders count="1"><border><left/><right/><top/><bottom/><diagonal/></border></borders><cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs><cellXfs count="4"><xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"/><xf numFmtId="0" fontId="1" fillId="2" borderId="0" xfId="0" applyFill="1" applyFont="1"/><xf numFmtId="3" fontId="0" fillId="0" borderId="0" xfId="0" applyNumberFormat="1"/><xf numFmtId="164" fontId="0" fillId="0" borderId="0" xfId="0" applyNumberFormat="1"/></cellXfs></styleSheet>`;
+        return zipStored({
+          '[Content_Types].xml':'<?xml version="1.0" encoding="UTF-8"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/><Override PartName="/xl/worksheets/sheet1.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/><Override PartName="/xl/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"/></Types>',
+          '_rels/.rels':'<?xml version="1.0" encoding="UTF-8"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/></Relationships>',
+          'xl/workbook.xml':`<?xml version="1.0" encoding="UTF-8"?><workbook xmlns="${ns}" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><sheets><sheet name="${xmlEsc(sheetName)}" sheetId="1" r:id="rId1"/></sheets></workbook>`,
+          'xl/_rels/workbook.xml.rels':'<?xml version="1.0" encoding="UTF-8"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet1.xml"/><Relationship Id="rId2" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/></Relationships>',
+          'xl/styles.xml':styles,
+          'xl/worksheets/sheet1.xml':worksheet
+        });
+      }
+      function workbookXlsx(){
+        const grid=[HEADERS,...catalog.map(p=>[p.category,p.model,p.price,p.commission,p.note||'',p.id])];
+        return buildXlsx(grid,'Commission',[22,44,18,17,60,37],[2,3]);
+      }
+      // Spreadsheet-facing schema contains no internal IDs or commission.
+      // Old sheets with an ID/SKU column remain importable for compatibility.
+      const SALES_HEADERS=['วันที่ขาย','รุ่นสินค้า','จำนวน','ราคาขาย/เครื่อง','ช่องทางชำระ'];
+      function salesWorkbookXlsx(list){
+        const grid=[SALES_HEADERS,...list.map(r=>[
+          String(r.date||'').slice(0,10),r.model,Number(r.qty||1),
+          historicalPrice(r)/Number(r.qty||1),r.payment||''
+        ])];
+        return buildXlsx(grid,'Sales',[18,44,13,22,21],[2,3],[0]);
+      }
+      function downloadFile(blob,filename){
+        const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=filename;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1500);
+      }
+      el('catalog-export').addEventListener('click',()=>{
+        if(!catalog.length)return toast('ยังไม่มีสินค้าในตาราง');
+        downloadFile(workbookXlsx(),'Product-Commission-Table-'+new Date().toISOString().slice(0,10)+'.xlsx');toast('ส่งออกตาราง Excel แล้ว');
+      });
+      async function unzipXlsx(file){
+        if(file.size>10*1024*1024)throw Error('ไฟล์ Excel ใหญ่เกิน 10 MB');
+        const bytes=new Uint8Array(await file.arrayBuffer()),dv=new DataView(bytes.buffer),reader=new TextDecoder();
+        let end=-1;
+        for(let i=bytes.length-22;i>=Math.max(0,bytes.length-65557);i--){if(dv.getUint32(i,true)===0x06054b50){end=i;break}}
+        if(end<0)throw Error('ไฟล์ไม่ใช่ Excel .xlsx ที่ถูกต้อง');
+        const count=dv.getUint16(end+10,true),start=dv.getUint32(end+16,true);let pos=start;
+        const entries=new Map();
+        if(count>1000)throw Error('ไฟล์ Excel มีไฟล์ภายในมากเกินไป');
+        for(let i=0;i<count;i++){
+          if(pos+46>bytes.length||dv.getUint32(pos,true)!==0x02014b50)throw Error('โครงสร้าง Excel ไม่ถูกต้อง');
+          const method=dv.getUint16(pos+10,true),size=dv.getUint32(pos+20,true),unpacked=dv.getUint32(pos+24,true),length=dv.getUint16(pos+28,true),extra=dv.getUint16(pos+30,true),comment=dv.getUint16(pos+32,true),local=dv.getUint32(pos+42,true);
+          const name=reader.decode(bytes.subarray(pos+46,pos+46+length));pos+=46+length+extra+comment;
+          if(unpacked>12*1024*1024)throw Error('ไฟล์ Excel มีข้อมูลใหญ่เกินขีดจำกัด');
+          if(local+30>bytes.length||dv.getUint32(local,true)!==0x04034b50)throw Error('โครงสร้าง Excel เสียหาย');
+          const dataStart=local+30+dv.getUint16(local+26,true)+dv.getUint16(local+28,true);
+          if(dataStart+size>bytes.length)throw Error('ข้อมูลใน Excel ไม่สมบูรณ์');
+          entries.set(name,{method,data:bytes.subarray(dataStart,dataStart+size),unpacked});
+        }
+        async function read(name){
+          const entry=entries.get(name);if(!entry)return null;
+          let data;
+          if(entry.method===0)data=entry.data;
+          else if(entry.method===8){
+            if(typeof DecompressionStream==='undefined')throw Error('เบราว์เซอร์นี้ไม่รองรับการอ่าน Excel แบบออฟไลน์');
+            data=new Uint8Array(await new Response(new Blob([entry.data]).stream().pipeThrough(new DecompressionStream('deflate-raw'))).arrayBuffer());
+          } else throw Error('Excel ใช้วิธีบีบอัดที่ไม่รองรับ');
+          if(data.length>12*1024*1024)throw Error('ข้อมูล Excel ใหญ่เกินขีดจำกัด');
+          return reader.decode(data);
+        }
+        return {read,entries};
+      }
+      function xmlDoc(text){
+        const doc=new DOMParser().parseFromString(text,'application/xml');
+        if(doc.getElementsByTagName('parsererror').length)throw Error('อ่านข้อมูล XML ภายใน Excel ไม่สำเร็จ');return doc;
+      }
+      function nodesByLocal(node,tag){return [...node.getElementsByTagNameNS('*',tag)]}
+      function getNodeText(node,tag){return nodesByLocal(node,tag)[0]?.textContent??''}
+      function columnNumber(address){let n=0;for(const ch of address.match(/^[A-Z]+/)?.[0]||'')n=n*26+ch.charCodeAt(0)-64;return n-1}
+      async function readXlsxGrid(file){
+        const zip=await unzipXlsx(file);let sheetPath='xl/worksheets/sheet1.xml';
+        const book=await zip.read('xl/workbook.xml');
+        if(book){
+          const bookDoc=xmlDoc(book),sheet=nodesByLocal(bookDoc,'sheet')[0];
+          const relId=sheet?.getAttribute('r:id')||sheet?.getAttributeNS('http://schemas.openxmlformats.org/officeDocument/2006/relationships','id');
+          const relText=await zip.read('xl/_rels/workbook.xml.rels');
+          if(relId&&relText){
+            const rel=[...nodesByLocal(xmlDoc(relText),'Relationship')].find(x=>x.getAttribute('Id')===relId);
+            if(rel){let path=rel.getAttribute('Target')||'';path=path.startsWith('/')?path.slice(1):'xl/'+path;const parts=[];for(const p of path.split('/')){if(p==='..')parts.pop();else if(p&&p!=='.')parts.push(p)}sheetPath=parts.join('/')}
+          }
+        }
+        const sheetText=await zip.read(sheetPath);
+        if(!sheetText)throw Error('ไม่พบตารางข้อมูลในไฟล์ Excel');
+        const sstText=await zip.read('xl/sharedStrings.xml');
+        const shared=sstText?[...nodesByLocal(xmlDoc(sstText),'si')].map(si=>[...nodesByLocal(si,'t')].map(x=>x.textContent).join('')):[];
+        const doc=xmlDoc(sheetText),xmlRows=[...nodesByLocal(doc,'row')];
+        if(xmlRows.length<2)throw Error('ตาราง Excel ไม่มีรายการ');
+        function values(r){
+          const out=[];
+          for(const c of [...nodesByLocal(r,'c')]){
+            const i=columnNumber(c.getAttribute('r')||'');if(i<0||i>32)continue;
+            const type=c.getAttribute('t');let v='';
+            if(type==='inlineStr')v=[...nodesByLocal(c,'t')].map(t=>t.textContent).join('');
+            else {v=getNodeText(c,'v');if(type==='s')v=shared[Number(v)]??'';}
+            out[i]=v;
+          }
+          return out;
+        }
+        return xmlRows.map(values);
+      }
+      function normalizedHeader(s){return String(s??'').replace(/^\ufeff/,'').trim().toLocaleLowerCase('en-US').replace(/[\s_()（）-]+/g,'')}
+      async function readCatalogXlsx(file){
+        const xmlRows=await readXlsxGrid(file);
+        const values=r=>r;
+        const normalized=normalizedHeader;
+        // s=>String(s??'').replace(/^\ufeff/,'').trim().toLocaleLowerCase('en-US').replace(/[\s_()（）-]+/g,'');
+        const first=values(xmlRows[0]).map(normalized);
+        const fieldNames=[['หมวดสินค้า','หมวด','series','category','group'],['รุ่นสินค้า','รุ่น','model','product','productname'],['ราคา','ราคาขาย','price','sellingprice'],['ค่าคอม','คอม','commission','comm'],['หมายเหตุ','note','notes','remark'],['รหัสสินค้า','รหัส','productid','sku','id']];
+        const indices=fieldNames.map(names=>first.findIndex(h=>names.some(n=>normalized(n)===h)));
+        if(indices.slice(0,4).some(i=>i<0))throw Error('หัวคอลัมน์ไม่ครบ: ต้องมี หมวดสินค้า, รุ่นสินค้า, ราคา และ ค่าคอม');
+        if(xmlRows.length>2001)throw Error('ตารางมีรายการสินค้าเกิน 2,000 แถว');
+        const result=[],duplicates=new Set(),duplicateIds=new Set();
+        for(let i=1;i<xmlRows.length;i++){
+          const v=values(xmlRows[i]);
+          if(!v.some(x=>String(x??'').trim()))continue;
+          const [category,model]=indices.slice(0,2).map(k=>String(v[k]??'').trim());
+          const numbers=indices.slice(2,4).map(k=>Number(String(v[k]??'').replace(/[,฿\s]/g,'')));
+          const note=indices[4]>=0?String(v[indices[4]]??'').trim():'';
+          if(!category||!model||category.length>80||model.length>160||note.length>400||numbers.some(n=>!Number.isSafeInteger(n)||n<0||n>999999999)||[2,3].some((n)=>String(v[indices[n]]??'').trim()==='')){
+            throw Error('ข้อมูลไม่ถูกต้องที่แถว '+(i+1)+' (ตรวจสอบหมวด รุ่น ราคา และค่าคอม)');
+          }
+          const key=cleanKey(model);
+          if(duplicates.has(key))throw Error('ชื่อรุ่นซ้ำที่แถว '+(i+1)+': '+model);
+          duplicates.add(key);
+          // Optional product ID keeps sales linked even if a model is renamed in Excel.
+          // Old 5-column workbooks without IDs still work via exact model matching.
+          const providedId=indices[5]>=0?String(v[indices[5]]??'').trim():'';
+          if(providedId.length>160)throw Error('รหัสสินค้ายาวเกินไปที่แถว '+(i+1));
+          const existingByName=catalog.find(p=>cleanKey(p.model)===key);
+          const id=providedId||(existingByName?.id||catalogId());
+          if(duplicateIds.has(id))throw Error('รหัสสินค้าซ้ำที่แถว '+(i+1)+': '+id);
+          duplicateIds.add(id);
+          result.push({id,category,model,price:numbers[0],commission:numbers[1],note});
+        }
+        if(!result.length)throw Error('ไม่มีสินค้าสำหรับนำเข้า');
+        return result;
+      }
+      let pendingCatalogImport=null;
+      const importDialog=el('import-dialog');
+      el('catalog-import').addEventListener('click',()=>{el('catalog-file').value='';el('catalog-file').click()});
+      el('catalog-file').addEventListener('change',async e=>{
+        const file=e.target.files?.[0];if(!file)return;
+        if(!/\.xlsx$/i.test(file.name))return toast('รองรับเฉพาะไฟล์ .xlsx');
+        try{
+          const data=await readCatalogXlsx(file);
+          pendingCatalogImport=data;
+          el('import-details').textContent='ไฟล์ '+file.name+' มี '+nf.format(data.length)+' สินค้า • ตารางปัจจุบัน '+nf.format(catalog.length)+' สินค้า • ราคาและค่าคอมบน Dashboard จะเปลี่ยนตามตารางใหม่นี้';
+          importDialog.hidden=false;
+        }catch(err){toast('นำเข้าไม่สำเร็จ: '+(err?.message||'รูปแบบไฟล์ผิดพลาด'));}
+      });
+      function closeImport(){pendingCatalogImport=null;importDialog.hidden=true}
+      el('import-cancel').addEventListener('click',closeImport);
+      importDialog.addEventListener('click',e=>{if(e.target===importDialog)closeImport()});
+      el('import-confirm').addEventListener('click',()=>{
+        if(!pendingCatalogImport)return;
+        catalog=pendingCatalogImport;saveCatalog();closeImport();renderCatalog();refreshLinkedViews();toast('นำเข้า '+nf.format(catalog.length)+' สินค้า • คำนวณราคาและค่าคอมใหม่แล้ว');
+      });
+      document.addEventListener('keydown',e=>{if(e.key==='Escape'){if(!productDialog.hidden)closeProductDialog();if(!importDialog.hidden)closeImport();if(!salesImportDialog.hidden)closeSalesImport()}});
+
+      function parseSaleDate(value, rowNo){
+        const raw=String(value??'').trim();
+        if(!raw)throw Error('วันที่ขายว่างที่แถว '+rowNo);
+        let iso='';
+        // Excel numeric serial (with or without a time fraction): discard time entirely.
+        if(/^\d{5}(?:\.\d+)?$/.test(raw)){
+          const serial=Math.floor(Number(raw));
+          const d=new Date(Date.UTC(1899,11,30)+serial*86400000);
+          iso=d.toISOString().slice(0,10);
+        }else if(/^\d{4}-\d{2}-\d{2}(?:[ T].*)?$/.test(raw)){
+          iso=raw.slice(0,10);
+        }else{
+          const m=raw.match(/^(\d{1,2})[\/-](\d{1,2})[\/-](\d{4})$/);
+          if(!m)throw Error('วันที่ขายไม่ถูกต้องที่แถว '+rowNo+' (ใช้ YYYY-MM-DD หรือ DD/MM/YYYY)');
+          let year=Number(m[3]);if(year>2400)year-=543;
+          iso=year.toString().padStart(4,'0')+'-'+m[2].padStart(2,'0')+'-'+m[1].padStart(2,'0');
+        }
+        const d=new Date(iso+'T00:00:00Z');
+        if(Number.isNaN(d.getTime())||d.toISOString().slice(0,10)!==iso||d.getUTCFullYear()<2000||d.getUTCFullYear()>2100)throw Error('วันที่ขายไม่ถูกต้องที่แถว '+rowNo);
+        return iso;
+      }
+      function salesImportToRecord(raw,item){
+        // Legacy spreadsheets can retain their internal ID and at-sale snapshots.
+        // For ID-free imports the app generates an ID and snapshots rates at import.
+        const existing=raw.preservedId?rows.find(r=>String(r.id)===raw.id):null;
+        const existingProduct=existing?findCatalogProduct(existing):null;
+        const sameProduct=existing&&(existingProduct?.id===item.id||modelKey(existing.model)===modelKey(item.model));
+        const pastQty=Number(existing?.qty||1);
+        const pastCommission=sameProduct&&pastQty>0
+          ?Math.round(historicalCommission(existing)*raw.qty/pastQty)
+          :Number(item.commission||0)*raw.qty;
+        const unitPrice=raw.unitPrice===null?Number(item.price||0):raw.unitPrice;
+        return {id:raw.id,date:raw.date,model:item.model,qty:raw.qty,
+          price:unitPrice*raw.qty,priceAtSale:unitPrice*raw.qty,
+          payment:raw.payment||null,productId:item.id,
+          commission:pastCommission,commissionAtSale:pastCommission};
+      }
+      function resolveSalesProduct(raw){
+        // When a known SKU points to a different known model name, ask to confirm.
+        // When the name differs only in typography, trust the stable SKU.
+        const byId=raw.sku?catalog.find(p=>p.id===raw.sku):null;
+        const byName=uniqueModelMatch(raw.model);
+        if(byId){
+          if(byName&&byName.id!==byId.id)return null;
+          return byId;
+        }
+        return byName;
+      }
+      // Rank names for the review dropdown only, never auto-match by similarity.
+      function editDistance(a,b){
+        const prev=Array.from({length:b.length+1},(_,i)=>i);
+        for(let i=1;i<=a.length;i++){
+          let left=i,diagonal=i-1;
+          for(let j=1;j<=b.length;j++){
+            const previous=prev[j];
+            prev[j]=Math.min(prev[j]+1,left+1,diagonal+(a[i-1]===b[j-1]?0:1));
+            diagonal=previous;left=prev[j];
+          }
+        }
+        return prev[b.length];
+      }
+      function suggestedMatches(name){
+        const key=modelKey(name);
+        return catalog.map(p=>({p,d:editDistance(key,modelKey(p.model))}))
+          .sort((a,b)=>a.d-b.d||a.p.model.localeCompare(b.p.model)).slice(0,5)
+          .filter(v=>v.d<=Math.max(4,Math.ceil(key.length*.4))).map(v=>v.p);
+      }
+      // Formally only the date and model are required for a manually made sheet.
+      // Defaults: quantity = 1, unit price = current catalog price, payment = unset.
+      const SALES_FIELDS={
+        date:['วันที่ขาย','วันที่','วันขาย','date','saledate','soldat'],
+        model:['รุ่นสินค้า','รุ่น','ชื่อรุ่น','สินค้า','model','product','productname'],
+        qty:['จำนวน','จำนวนเครื่อง','qty','quantity'],
+        price:['ราคาขาย/เครื่อง','ราคาขายต่อเครื่อง','ราคาขาย','ราคาต่อเครื่อง','ราคา','price','unitprice','sellingprice'],
+        payment:['ช่องทางชำระ','ช่องทางชำระเงิน','ช่องทาง','วิธีชำระเงิน','ชำระเงิน','payment','paymentmethod'],
+        id:['รหัสรายการ','รหัสการขาย','saleid','recordid','transactionid'],
+        sku:['รหัสสินค้า','sku','productid']
+      };
+      function paymentFromExcel(value){
+        const v=String(value??'').trim().toLocaleLowerCase('th').replace(/\s+/g,'');
+        if(!v||['ยังไม่เลือก','ยังไม่ได้เลือก','ไม่ระบุ','-'].includes(v))return '';
+        if(['เงินสด','cash'].includes(v))return 'เงินสด';
+        if(['บัตรเครดิต','บัตร','credit','creditcard'].includes(v))return 'บัตรเครดิต';
+        if(['สินเชื่อ','ผ่อน','financing','finance','loan'].includes(v))return 'สินเชื่อ';
+        return null;
+      }
+      function makeImportedSaleId(used){
+        let id;
+        do{
+          id='sale-'+(typeof crypto!=='undefined'&&typeof crypto.randomUUID==='function'
+            ?crypto.randomUUID()
+            :Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,12));
+        }while(used.has(id));
+        return id;
+      }
+      async function readSalesXlsx(file){
+        const xmlRows=await readXlsxGrid(file);
+        if(xmlRows.length>5001)throw Error('รายการขายเกิน 5,000 แถว');
+        const header=(xmlRows[0]||[]).map(normalizedHeader);
+        const indices=Object.fromEntries(Object.entries(SALES_FIELDS).map(([field,aliases])=>[
+          field,header.findIndex(value=>aliases.some(alias=>normalizedHeader(alias)===value))
+        ]));
+        if(indices.date<0||indices.model<0)throw Error('หัวคอลัมน์ที่จำเป็นคือ วันที่ขาย และ รุ่นสินค้า (ไม่ต้องมีรหัสรายการ)');
+        const used=new Set(),rawRows=[];
+        const readField=(row,name)=>indices[name]<0?'':String(row[indices[name]]??'').trim();
+        for(let i=1;i<xmlRows.length;i++){
+          const v=xmlRows[i],rno=i+1;
+          if(!v.some(x=>String(x??'').trim()))continue;
+          const rawDate=readField(v,'date'), model=readField(v,'model');
+          const qtyStr=readField(v,'qty'),priceStr=readField(v,'price');
+          const paymentStr=readField(v,'payment'),skuStr=readField(v,'sku');
+          const idStr=readField(v,'id');
+          const date=parseSaleDate(rawDate,rno);
+          const qty=qtyStr?Number(qtyStr.replace(/,/g,'')):1;
+          const unitPrice=priceStr?Number(priceStr.replace(/[,฿\s]/g,'')):null;
+          const payment=paymentFromExcel(paymentStr);
+          if(!model||model.length>160)throw Error('ชื่อรุ่นไม่ถูกต้องที่แถว '+rno);
+          if(!Number.isSafeInteger(qty)||qty<1||qty>999)throw Error('จำนวนไม่ถูกต้องที่แถว '+rno);
+          if(unitPrice!==null&&(!Number.isSafeInteger(unitPrice)||unitPrice<0||unitPrice>999999999))throw Error('ราคาต่อเครื่องไม่ถูกต้องที่แถว '+rno);
+          if(payment===null)throw Error('ช่องทางชำระไม่ถูกต้องที่แถว '+rno+' (เว้นว่างได้)');
+          const id=idStr?genericSaleId(idStr):makeImportedSaleId(used);
+          if(id.length>160||used.has(id))throw Error('รหัสรายการซ้ำหรือไม่ถูกต้องที่แถว '+rno);
+          used.add(id);
+          rawRows.push({id,preservedId:Boolean(idStr),date,model,qty,unitPrice,payment,sku:skuStr,rowNo:rno});
+        }
+        if(!rawRows.length)throw Error('ไม่มีรายการขายสำหรับนำเข้า');
+        return rawRows;
+      }
+      let pendingSalesImport=null;
+      const salesImportDialog=el('sales-import-dialog');
+      const matchPanel=el('sales-import-matches');
+      const matchList=el('sales-import-match-list');
+      const matchCount=el('sales-import-match-count');
+      function reviewKey(raw){
+        // Different SKU + same text must not silently share a mapping.
+        return (raw.sku||'')+'::'+modelKey(raw.model);
+      }
+      function mappedSalesImport(){
+        if(!pendingSalesImport)return null;
+        const result=[];
+        for(const raw of pendingSalesImport.rawRows){
+          const auto=resolveSalesProduct(raw);
+          const choice=pendingSalesImport.manual[reviewKey(raw)];
+          const item=auto||catalog.find(p=>p.id===choice);
+          if(!item)return null;
+          result.push(salesImportToRecord(raw,item));
+        }
+        return result;
+      }
+      function updateSalesImportReview(){
+        if(!pendingSalesImport)return;
+        const resolved=mappedSalesImport();
+        const unresolved=pendingSalesImport.unmatched.filter(x=>!pendingSalesImport.manual[x.key]).length;
+        el('sales-import-confirm').disabled=unresolved>0||!resolved;
+        matchCount.hidden=unresolved===0;
+        matchCount.textContent=unresolved?'เหลือ '+nf.format(unresolved)+' รุ่นที่ต้องจับคู่ก่อนนำเข้า':'';
+        if(!resolved){
+          el('sales-import-details').textContent='ไฟล์ '+pendingSalesImport.filename+' • '+nf.format(pendingSalesImport.rawRows.length)+' รายการ • มีชื่อรุ่นที่ต้องตรวจสอบ '+nf.format(pendingSalesImport.unmatched.length)+' รุ่น';
+          return;
+        }
+        pendingSalesImport.records=resolved;
+        const qty=resolved.reduce((sum,r)=>sum+r.qty,0);
+        const total=resolved.reduce((sum,r)=>sum+Number(findCatalogProduct(r)?.price||0)*r.qty,0);
+        const com=resolved.reduce((sum,r)=>sum+currentCommission(r).value,0);
+        el('sales-import-details').textContent='ไฟล์ '+pendingSalesImport.filename+' • '+nf.format(resolved.length)+' รายการ ('+nf.format(qty)+' เครื่อง) • ยอดตามราคาปัจจุบัน '+money(total)+' • ค่าคอม '+money(com)+' • จะแทนรายการขายเดิมทั้งหมด';
+      }
+      function renderSalesImportMatches(){
+        if(!pendingSalesImport)return;
+        const unmatched=pendingSalesImport.unmatched;
+        matchPanel.hidden=!unmatched.length;
+        matchList.innerHTML=unmatched.map(({key,model,sku,rows:rowNums})=>{
+          const selected=pendingSalesImport.manual[key]||'';
+          const suggested=suggestedMatches(model);
+          const ids=new Set(suggested.map(p=>p.id));
+          const top=suggested.map(p=>`<option value="${escapeHtml(p.id)}" ${selected===p.id?'selected':''}>${escapeHtml(p.model)} — ${money(p.commission)}</option>`).join('');
+          const rest=catalog.filter(p=>!ids.has(p.id)).sort((a,b)=>a.model.localeCompare(b.model)).map(p=>`<option value="${escapeHtml(p.id)}" ${selected===p.id?'selected':''}>${escapeHtml(p.model)} — ${money(p.commission)}</option>`).join('');
+          const opts=`<option value="">— เลือกรุ่นที่ถูกต้อง —</option>`+(top?`<optgroup label="รุ่นที่ใกล้เคียง">${top}</optgroup>`:'')+`<optgroup label="สินค้าทั้งหมด">${rest}</optgroup>`;
+          return `<div class="sales-match-item${selected?' is-resolved':''}"><div class="sales-match-source">${escapeHtml(model)}</div><div class="sales-match-rows">Excel แถว ${rowNums.join(', ')}${sku?' • รหัสที่ระบุ '+escapeHtml(sku):''}</div><select class="sales-match-select" data-match-key="${escapeHtml(key)}" aria-label="จับคู่รุ่น ${escapeHtml(model)}">${opts}</select></div>`;
+        }).join('');
+        updateSalesImportReview();
+      }
+      matchList.addEventListener('change',event=>{
+        const select=event.target.closest('[data-match-key]');
+        if(!select||!pendingSalesImport)return;
+        if(select.value)pendingSalesImport.manual[select.dataset.matchKey]=select.value;
+        else delete pendingSalesImport.manual[select.dataset.matchKey];
+        select.closest('.sales-match-item').classList.toggle('is-resolved',Boolean(select.value));
+        updateSalesImportReview();
+      });
+      el('sales-import-btn').addEventListener('click',()=>{el('sales-import-file').value='';el('sales-import-file').click()});
+      el('sales-import-file').addEventListener('change',async e=>{
+        const file=e.target.files?.[0];if(!file)return;
+        if(!/\.xlsx$/i.test(file.name))return toast('รองรับเฉพาะไฟล์ .xlsx');
+        try{
+          const rawRows=await readSalesXlsx(file);
+          const unmatchedByKey=new Map();
+          for(const raw of rawRows){
+            if(resolveSalesProduct(raw))continue;
+            const key=reviewKey(raw);
+            if(!unmatchedByKey.has(key))unmatchedByKey.set(key,{key,model:raw.model,sku:raw.sku,rows:[]});
+            unmatchedByKey.get(key).rows.push(raw.rowNo);
+          }
+          pendingSalesImport={rawRows,manual:{},unmatched:[...unmatchedByKey.values()],filename:file.name,records:null};
+          renderSalesImportMatches();
+          salesImportDialog.hidden=false;
+        }catch(err){toast('นำเข้าล้มเหลว: '+(err?.message||'ไฟล์ไม่ถูกต้อง'))}
+      });
+      function closeSalesImport(){pendingSalesImport=null;salesImportDialog.hidden=true;matchPanel.hidden=true;matchList.innerHTML='';matchCount.hidden=true}
+      el('sales-import-cancel').addEventListener('click',closeSalesImport);
+      salesImportDialog.addEventListener('click',e=>{if(e.target===salesImportDialog)closeSalesImport()});
+      el('sales-import-confirm').addEventListener('click',()=>{
+        const result=mappedSalesImport();
+        if(!result)return toast('กรุณาจับคู่รุ่นที่ไม่ตรงตารางให้ครบก่อนนำเข้า');
+        rows=result;save();
+        try{localStorage.setItem(IMPORT_FLAG,'true')}catch{}
+        closeSalesImport();setDeleteMode(false);refreshLinkedViews();
+        toast('นำเข้ารายการขายแล้ว • จับคู่สินค้าและคำนวณค่าคอมจากตาราง');
+      });
+
+      // Standalone composer based on the repository's SaleComposer expansion and item counters.
+      // Every draft is a separate device, allowing per-device payment/date and future changes.
+      const DRAFT_KEY='sales-flow-composer-drafts-v1';
+      let composeSeries='',composeModel='',drafts=[];
+      try{
+        const storedDrafts=JSON.parse(localStorage.getItem(DRAFT_KEY)||'[]');
+        if(Array.isArray(storedDrafts))drafts=storedDrafts.filter(d=>d&&typeof d.productId==='string'&&typeof d.id==='string'&&typeof d.date==='string');
+      }catch{}
+      const draftId=()=>typeof crypto!=='undefined'&&typeof crypto.randomUUID==='function'?crypto.randomUUID():'d-'+Date.now()+'-'+Math.random().toString(36).slice(2);
+      const todayLocal=()=>new Date(Date.now()+7*3600000).toISOString().slice(0,10);
+      const draftProduct=d=>catalog.find(p=>p.id===d.productId);
+      const draftAmount=d=>Number(d.manualPrice?d.price:(draftProduct(d)?.price??d.price));
+      const draftCommission=d=>Number(draftProduct(d)?.commission||0);
+      function saveDrafts(){try{localStorage.setItem(DRAFT_KEY,JSON.stringify(drafts))}catch{toast('เก็บตะกร้าในเครื่องไม่สำเร็จ')}}
+      // Parse a catalog item into a product family and RAM/storage variant.
+      // Kit editions are shown as separate variants, never collapsed into standard SKUs.
+      function composeVariant(product){
+        const name=String(product.model||'');
+        const match=name.match(/^(.*?)\s+(\d{1,2})\s*\/\s*(\d{2,4}|\d+\s*TB)\b(.*)$/i);
+        if(!match)return {base:name,variant:'รุ่นมาตรฐาน'};
+        let storage=match[3].replace(/\s+/g,'').toUpperCase();
+        const ram=match[2]+' GB';
+        const rom=/TB$/i.test(storage)?storage.replace(/TB$/,' TB'):storage+' GB';
+        return {base:match[1].trim(),variant:ram+' / '+rom+(match[4].trim()?' · '+match[4].trim():'')};
+      }
+      function composerGroups(){
+        const term=cleanKey(el('compose-search').value);
+        const items=catalog.filter(p=>!term||cleanKey(p.model+' '+p.category).includes(term));
+        const series=new Map();
+        for(const p of items){
+          if(!series.has(p.category))series.set(p.category,new Map());
+          const meta=composeVariant(p),map=series.get(p.category);
+          if(!map.has(meta.base))map.set(meta.base,[]);
+          map.get(meta.base).push({p,meta});
+        }
+        return series;
+      }
+      function renderComposer(){
+        const groups=composerGroups();
+        let html='';
+        const counts=new Map();
+        for(const d of drafts)counts.set(d.productId,(counts.get(d.productId)||0)+1);
+        for(const [category,models] of groups){
+          let groupCount=0;
+          for(const variants of models.values())for(const v of variants)groupCount+=(counts.get(v.p.id)||0);
+          const open=composeSeries===category||Boolean(el('compose-search').value.trim());
+          html+=`<section class="composer-group"><button class="composer-series-head" type="button" data-compose-series="${escapeHtml(category)}" aria-expanded="${String(open)}"><b>${escapeHtml(category)}</b><span class="composer-series-meta"><span class="composer-series-count">${groupCount?nf.format(groupCount):''}</span><span class="composer-chevron">⌄</span></span></button>`;
+          if(open){
+            html+='<div class="composer-model-list">';
+            for(const [model, variants] of models){
+              const modelCount=variants.reduce((n,v)=>n+(counts.get(v.p.id)||0),0);
+              const expanded=composeModel===category+'::'+model||Boolean(el('compose-search').value.trim());
+              html+=`<div class="composer-model"><button class="composer-model-head" type="button" data-compose-model="${escapeHtml(category+'::'+model)}" aria-expanded="${String(expanded)}"><span>${escapeHtml(model)}</span><span class="composer-model-meta">${modelCount?nf.format(modelCount)+' เครื่อง':''}<span class="composer-chevron">⌄</span></span></button>`;
+              if(expanded){
+                html+='<div class="composer-variant-list">';
+                for(const {p,meta} of variants){
+                  const count=counts.get(p.id)||0;
+                  html+=`<div class="composer-variant"><div class="composer-variant-info"><strong>${escapeHtml(meta.variant)}</strong><small>${money(p.price)} <span class="composer-comm-accent">· คอม ${money(p.commission)}</span></small></div><div class="composer-counter"><button type="button" data-compose-remove="${escapeHtml(p.id)}" ${count?'':'disabled'} aria-label="ลด ${escapeHtml(p.model)}">−</button><b>${nf.format(count)}</b><button type="button" class="plus" data-compose-add="${escapeHtml(p.id)}" aria-label="เพิ่ม ${escapeHtml(p.model)}">+</button></div></div>`;
+                }
+                html+='</div>';
+              }
+              html+='</div>';
+            }
+            html+='</div>';
+          }
+          html+='</section>';
+        }
+        el('compose-groups').innerHTML=html||'<div class="composer-empty">ไม่พบรุ่นสินค้าในตารางค่าคอม</div>';
+        el('compose-cart-count').textContent=nf.format(drafts.length)+' เครื่อง';
+        el('compose-cart-commission').textContent='คอม '+money(drafts.reduce((n,d)=>n+draftCommission(d),0));
+        el('compose-review').textContent='ตรวจสอบ ('+nf.format(drafts.length)+')';
+        el('compose-review').disabled=!drafts.length;
+      }
+      el('compose-search').addEventListener('input',renderComposer);
+      el('compose-groups').addEventListener('click',e=>{
+        const series=e.target.closest('[data-compose-series]');
+        if(series){const key=series.dataset.composeSeries;composeSeries=composeSeries===key?'':key;composeModel='';renderComposer();return;}
+        const model=e.target.closest('[data-compose-model]');
+        if(model){const key=model.dataset.composeModel;composeModel=composeModel===key?'':key;renderComposer();return;}
+        const add=e.target.closest('[data-compose-add]');
+        if(add){const p=catalog.find(p=>p.id===add.dataset.composeAdd);if(!p)return;
+          drafts.push({id:draftId(),productId:p.id,model:p.model,date:todayLocal(),payment:null,price:Number(p.price),manualPrice:false});
+          saveDrafts();renderComposer();return;
+        }
+        const remove=e.target.closest('[data-compose-remove]');
+        if(remove){const i=drafts.map(d=>d.productId).lastIndexOf(remove.dataset.composeRemove);if(i===-1)return;
+          drafts.splice(i,1);saveDrafts();renderComposer();return;
+        }
+      });
+      const composeOverlay=el('compose-summary-overlay');
+      function renderComposeSummary(){
+        if(!drafts.length){closeComposeSummary();renderComposer();return;}
+        const list=drafts.map((d,i)=>{
+          const p=draftProduct(d),missing=!p;
+          const pay=paymentOptions.map(([name,paths])=>`<button class="composer-payment" type="button" aria-pressed="${String(d.payment===name)}" data-compose-pay="${escapeHtml(name)}" data-compose-draft="${escapeHtml(d.id)}" title="${escapeHtml(name)}" aria-label="${escapeHtml(name)} สำหรับ ${escapeHtml(p?.model||d.model)}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${paths}</svg></button>`).join('');
+          return `<article class="composer-summary-item" data-draft-id="${escapeHtml(d.id)}"><div class="composer-item-top"><div><b>${i+1}. ${escapeHtml(p?.model||d.model)}</b><small>${missing?'รุ่นนี้ถูกลบจากตาราง':('คอม '+money(p.commission))}</small></div><button class="composer-item-remove" type="button" data-compose-delete="${escapeHtml(d.id)}" aria-label="ลบรายการนี้"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M9 7V4h6v3M7 7l1 13h8l1-13M10 11v6m4-6v6"/></svg></button></div><div class="composer-payments ${d.payment?'':'composer-payment-pending'}">${pay}</div><div class="composer-item-fields"><label>ราคาขายจริง<input type="number" min="1" step="1" inputmode="decimal" data-compose-price="${escapeHtml(d.id)}" value="${escapeHtml(draftAmount(d))}"></label><label>วันที่ขาย<input type="date" data-compose-date="${escapeHtml(d.id)}" value="${escapeHtml(d.date)}"></label></div></article>`;
+        }).join('');
+        el('compose-summary-list').innerHTML=list;
+        const total=drafts.reduce((n,d)=>n+draftAmount(d),0),commission=drafts.reduce((n,d)=>n+draftCommission(d),0);
+        el('compose-summary-stats').textContent=nf.format(drafts.length)+' เครื่อง · '+money(total)+' · คอม '+money(commission);
+      }
+      function openComposeSummary(){if(!drafts.length)return;el('compose-error').hidden=true;composeOverlay.hidden=false;renderComposeSummary()}
+      function closeComposeSummary(){composeOverlay.hidden=true;el('compose-error').hidden=true}
+      el('compose-review').addEventListener('click',openComposeSummary);
+      el('compose-close').addEventListener('click',closeComposeSummary);
+      composeOverlay.addEventListener('click',e=>{if(e.target===composeOverlay)closeComposeSummary()});
+      el('compose-summary-list').addEventListener('click',e=>{
+        const btn=e.target.closest('[data-compose-pay]');
+        if(btn){const d=drafts.find(d=>d.id===btn.dataset.composeDraft);if(!d)return;
+          d.payment=d.payment===btn.dataset.composePay?null:btn.dataset.composePay;saveDrafts();renderComposeSummary();return;}
+        const del=e.target.closest('[data-compose-delete]');
+        if(del){drafts=drafts.filter(d=>d.id!==del.dataset.composeDelete);saveDrafts();renderComposeSummary();renderComposer()}
+      });
+      el('compose-summary-list').addEventListener('change',e=>{
+        const price=e.target.closest('[data-compose-price]');
+        if(price){const d=drafts.find(d=>d.id===price.dataset.composePrice);if(!d)return;
+          const amount=Number(price.value);
+          if(!Number.isSafeInteger(amount)||amount<=0||amount>100000000){el('compose-error').textContent='ราคาต้องเป็นตัวเลขมากกว่า 0';el('compose-error').hidden=false;price.value=draftAmount(d);return;}
+          d.price=amount;d.manualPrice=true;saveDrafts();renderComposeSummary();return;}
+        const day=e.target.closest('[data-compose-date]');
+        if(day){const d=drafts.find(d=>d.id===day.dataset.composeDate);if(!d)return;
+          if(!/^\d{4}-\d{2}-\d{2}$/.test(day.value)){el('compose-error').textContent='กรุณาระบุวันที่ขาย';el('compose-error').hidden=false;day.value=d.date;return;}
+          d.date=day.value;saveDrafts();renderComposeSummary();}
+      });
+      el('compose-save').addEventListener('click',()=>{
+        const problem=el('compose-error');problem.hidden=true;
+        if(!drafts.length)return;
+        for(const d of drafts){
+          if(!draftProduct(d)){problem.textContent='พบสินค้าที่ถูกลบออกจากตาราง กรุณาลบรายการนั้นออกก่อน';problem.hidden=false;return;}
+          const amount=draftAmount(d);
+          if(!Number.isSafeInteger(amount)||amount<=0||amount>100000000){problem.textContent='กรุณาตรวจสอบราคาขาย';problem.hidden=false;return;}
+          const iso=String(d.date||'');const date=new Date(iso+'T12:00:00Z');
+          if(!/^\d{4}-\d{2}-\d{2}$/.test(iso)||Number.isNaN(date.getTime())||date.toISOString().slice(0,10)!==iso){problem.textContent='กรุณาตรวจสอบวันที่ขาย';problem.hidden=false;return;}
+        }
+        const entries=drafts.map(d=>{
+          const p=draftProduct(d),price=draftAmount(d),commission=Number(p.commission||0);
+          return {id:'sale-'+draftId(),date:d.date,model:p.model,qty:1,productId:p.id,price,priceAtSale:price,commission,commissionAtSale:commission,payment:d.payment||null};
+        });
+        rows=[...entries,...rows];save();
+        drafts=[];saveDrafts();
+        // Mark the history as user-provided, not the built-in example set.
+        try{localStorage.setItem(IMPORT_FLAG,'true')}catch{}
+        el('history-footnote').textContent='รายการขายที่บันทึกผ่านเว็บหรือ Excel • วันที่แสดงเฉพาะวัน/เดือน/ปี • ค่าคอมอ้างอิงตารางสินค้า';
+        closeComposeSummary();renderComposer();refreshLinkedViews();setView('history');
+        toast('บันทึกยอดขาย '+nf.format(entries.length)+' เครื่องเรียบร้อย');
+      });
+      document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!composeOverlay.hidden)closeComposeSummary()});
+      renderSales();
+    })();
+  </script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./service-worker.js').catch(console.error);
+      });
+    }
+  </script>
+</body>
+</html>
