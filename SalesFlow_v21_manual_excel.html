@@ -235,7 +235,7 @@
       .delete-action-inner{gap:6px}.delete-cancel,.delete-confirm-open{padding:0 9px}
     }
 
-    /* v11: Compact, editable commission catalog */
+    /* Compact commission catalog */
     .catalog-heading{padding-bottom:10px}
     .catalog-toolbar{display:flex;gap:8px;flex-wrap:wrap;margin:0 9px 12px}
     .catalog-action{min-height:42px;padding:0 13px;border-radius:12px;white-space:nowrap;border:1px solid rgba(255,255,255,.85);background:rgba(255,255,255,.55);color:#6881a9;font-size:12px;font-weight:700;box-shadow:inset 0 1px rgba(255,255,255,.45)}
@@ -262,13 +262,8 @@
     .catalog-disclaimer{font-size:11px;line-height:1.8;color:#8496b1;margin:15px 12px}
     .catalog-overlay[hidden]{display:none}
     .catalog-overlay{position:fixed;inset:0;z-index:110;background:rgba(43,64,106,.45);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;padding:18px}
-    .catalog-form,.catalog-import-confirm{width:min(100%,460px);max-height:calc(100dvh - 36px);overflow-y:auto;display:flex;flex-direction:column;gap:12px;padding:23px;border:1px solid rgba(255,255,255,.87);border-radius:23px;background:#f0f3fc;box-shadow:0 19px 50px rgba(55,72,119,.19)}
-    .catalog-form-header{display:flex;align-items:center;justify-content:space-between;gap:10px}
-    .catalog-form h2,.catalog-import-confirm h2{margin:0;font-size:19px;color:#596e91}
-    .catalog-close{border:0;background:none;color:#8795b0;font-size:28px;line-height:1}
-    .catalog-form label{display:flex;flex-direction:column;gap:5px;font-size:12px;color:#7b88a2;font-weight:700}
-    .catalog-form input,.catalog-form textarea{width:100%;min-height:44px;padding:9px 12px;border-radius:12px;border:1px solid #d5deed;background:white;color:#526681;font-size:14px;resize:vertical}
-    .catalog-form-money{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .catalog-import-confirm{width:min(100%,460px);max-height:calc(100dvh - 36px);overflow-y:auto;display:flex;flex-direction:column;gap:12px;padding:23px;border:1px solid rgba(255,255,255,.87);border-radius:23px;background:#f0f3fc;box-shadow:0 19px 50px rgba(55,72,119,.19)}
+    .catalog-import-confirm h2{margin:0;font-size:19px;color:#596e91}
     .catalog-form-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:8px}
     .catalog-import-confirm p{margin:2px 0 0;line-height:1.6;color:#6f7e99;font-size:13px}
     .catalog-import-confirm .catalog-import-warning{color:#af687d;font-size:12px}
@@ -325,7 +320,7 @@
     .catalog-mini-row{display:flex;flex-direction:column;justify-content:center;gap:1px;width:100%;min-height:27px;padding:2px 6px;border:0;border-bottom:1px solid rgba(255,255,255,.53);border-radius:4px;background:transparent;text-align:left;color:inherit;min-width:0}
     .catalog-mini-row:nth-child(even){background:rgba(224,235,254,.26)}
     .catalog-mini-row:last-child{border-bottom:0}
-    .catalog-mini-row:hover,.catalog-mini-row:focus-visible{background:rgba(216,229,255,.70)}
+    .catalog-import-note{margin:0 10px 12px;color:#536b8b;font-size:12px;line-height:1.5}
     .catalog-mini-name{display:block;max-width:100%;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:10.7px;line-height:1.18;font-weight:670;color:#536886}
     .catalog-mini-numbers{width:100%;display:flex;align-items:baseline;justify-content:space-between;gap:3px;font-size:9.2px;line-height:1.12;white-space:nowrap;font-variant-numeric:tabular-nums}
     .catalog-mini-price{font-weight:550;color:#8b98b0}
@@ -333,8 +328,6 @@
     .catalog-mini-commission::before{content:'คอม ';font-weight:500;color:#8494ae}
     .catalog-mini-note{display:inline-block;margin-left:2px;font-size:8px;color:#ad7860;vertical-align:middle}
     .catalog-disclaimer{margin:8px 11px 4px;font-size:10px;line-height:1.5}
-    .catalog-form-delete{margin-right:auto;color:#ba5670;background:rgba(255,229,236,.7);border-color:rgba(213,124,144,.30)}
-    .catalog-form-delete[hidden]{display:none}
     @media(max-width:999px){.catalog-rows{grid-template-columns:repeat(3,minmax(0,1fr))}}
     @media(max-width:699px){.catalog-rows{grid-template-columns:repeat(2,minmax(0,1fr))}}
     @media(max-width:390px){.catalog-toolbar{gap:4px;margin:1px 5px 6px}.catalog-toolbar .catalog-action{min-height:32px;padding:0 7px;font-size:9.8px}.catalog-filters{gap:5px;padding:0 5px}.catalog-rows{gap:6px;padding:0 4px}.catalog-lane{gap:6px}.catalog-series{padding:3px}.catalog-series-heading{padding:6px 5px}.catalog-series-name{font-size:10px}.catalog-mini-row{min-height:31px;padding:3px 5px}.catalog-mini-name{font-size:10.15px}.catalog-mini-numbers{font-size:8.8px}.catalog-hint{font-size:8.5px}.catalog-summary{padding:6px 5px 7px}.catalog-collapse-all{padding:0 7px;font-size:9px}}
@@ -709,11 +702,11 @@
       <div class="view" id="view-catalog">
         <header class="section-head catalog-heading"><h1>ตารางค่าคอม</h1></header>
         <div class="catalog-toolbar">
-          <button type="button" class="catalog-action catalog-add" id="catalog-add">+ เพิ่มรุ่น</button>
           <button type="button" class="catalog-action" id="catalog-export">↓ ส่งออก</button>
           <button type="button" class="catalog-action" id="catalog-import">↑ นำเข้า</button>
           <input id="catalog-file" type="file" accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" hidden>
         </div>
+        <p class="catalog-import-note">แก้ไขตารางในไฟล์ Excel แล้วกด “นำเข้า” เพื่ออัปเดต</p>
         <div class="catalog-filters">
           <input type="search" id="catalog-search" placeholder="ค้นหารุ่น" aria-label="ค้นหารุ่นในตารางค่าคอม">
           <select id="catalog-category" aria-label="กรองหมวดสินค้า"><option value="">ทุกหมวดสินค้า</option></select>
@@ -770,17 +763,6 @@
       <p class="catalog-import-warning">ไม่ต้องระบุรหัสรายการหรือรหัสสินค้า • หากเว้นจำนวนจะใช้ 1 เครื่อง หากเว้นราคาจะใช้ราคาตารางสินค้า • การนำเข้าจะแทนที่รายการขายทั้งหมด</p>
       <div class="catalog-form-actions"><button class="catalog-action" type="button" id="sales-import-cancel">ยกเลิก</button><button class="catalog-action catalog-add" type="button" id="sales-import-confirm">แทนที่รายการขาย</button></div>
     </div>
-  </div>
-  <div class="catalog-overlay" id="product-dialog" hidden>
-    <form class="catalog-form" id="product-form" autocomplete="off" aria-labelledby="product-dialog-title">
-      <div class="catalog-form-header"><h2 id="product-dialog-title">เพิ่มสินค้า</h2><button type="button" class="catalog-close" id="product-cancel-icon" aria-label="ปิด">×</button></div>
-      <label>หมวดสินค้า<input id="product-category" required maxlength="80" list="catalog-category-list" placeholder="เช่น vivo V Series"></label>
-      <datalist id="catalog-category-list"><option value="vivo X Series"><option value="vivo V Series"><option value="vivo Y Series"><option value="iQOO Series"><option value="อุปกรณ์เสริม vivo"><option value="iMoo"></datalist>
-      <label>ชื่อรุ่นสินค้า<input id="product-model" required maxlength="160" placeholder="เช่น V80 8/256"></label>
-      <div class="catalog-form-money"><label>ราคาขาย (บาท)<input id="product-price" type="number" inputmode="numeric" min="0" max="999999999" step="1" required></label><label>ค่าคอม (บาท)<input id="product-commission" type="number" inputmode="numeric" min="0" max="999999999" step="1" required></label></div>
-      <label>หมายเหตุ (ถ้ามี)<textarea id="product-note" maxlength="400" rows="2" placeholder="เงื่อนไข / แคมเปญ / ข้อควรระวัง"></textarea></label>
-      <div class="catalog-form-actions"><button class="catalog-action catalog-form-delete" type="button" id="product-delete" hidden>ลบสินค้านี้</button><button class="catalog-action" type="button" id="product-cancel">ยกเลิก</button><button class="catalog-action catalog-add" type="submit" id="product-submit">บันทึกสินค้า</button></div>
-    </form>
   </div>
   <div class="catalog-overlay" id="import-dialog" hidden>
     <div class="catalog-import-confirm" role="alertdialog" aria-modal="true" aria-labelledby="import-title" aria-describedby="import-details">
@@ -1016,7 +998,7 @@
         downloadFile(salesWorkbookXlsx(records),'Sales-Records-'+new Date().toISOString().slice(0,10)+'.xlsx');
         toast('ส่งออก Excel แล้ว • ไม่ต้องใช้รหัสรายการหรือค่าคอม');
       });
-      // Editable product catalog; current rates are linked to each sale by product ID.
+      // Imported product catalog; current rates are linked to each sale by product ID.
       const CATALOG_KEY='sales-flow-product-catalog-v2';
       const defaultCatalog=[{"id":"p-001","category":"vivo X Series","model":"X Fold5 16/512","price":49999,"commission":1000,"note":""},{"id":"p-002","category":"vivo X Series","model":"X300 Ultra 16/1TB Photographer Kit","price":79999,"commission":1000,"note":""},{"id":"p-003","category":"vivo X Series","model":"X300 Ultra 16/1TB","price":64999,"commission":900,"note":""},{"id":"p-004","category":"vivo X Series","model":"X300 Ultra 16/512","price":54999,"commission":800,"note":""},{"id":"p-005","category":"vivo X Series","model":"X300 Pro 16/512","price":39999,"commission":800,"note":""},{"id":"p-006","category":"vivo X Series","model":"X300 Pro 12/256","price":36999,"commission":600,"note":""},{"id":"p-007","category":"vivo X Series","model":"X300 16/512","price":32999,"commission":700,"note":""},{"id":"p-008","category":"vivo X Series","model":"X300 12/256","price":29999,"commission":600,"note":""},{"id":"p-009","category":"vivo X Series","model":"X300 FE 12/512 Photographer Kit","price":37999,"commission":700,"note":""},{"id":"p-010","category":"vivo X Series","model":"X300 FE 12/256 Photographer Kit","price":33999,"commission":650,"note":""},{"id":"p-011","category":"vivo X Series","model":"X300 FE 12/512","price":31999,"commission":600,"note":""},{"id":"p-012","category":"vivo X Series","model":"X300 FE 12/256","price":27999,"commission":550,"note":""},{"id":"p-013","category":"vivo X Series","model":"X200 FE 12/512","price":22999,"commission":500,"note":""},{"id":"p-014","category":"vivo V Series","model":"V80 8/512","price":29999,"commission":575,"note":""},{"id":"p-015","category":"vivo V Series","model":"V80 8/256","price":24999,"commission":475,"note":""},{"id":"p-016","category":"vivo V Series","model":"V80 8/128","price":21999,"commission":375,"note":""},{"id":"p-017","category":"vivo V Series","model":"V70 12/512","price":23999,"commission":525,"note":""},{"id":"p-018","category":"vivo V Series","model":"V70 12/256","price":19999,"commission":425,"note":""},{"id":"p-019","category":"vivo V Series","model":"V70 8/256","price":17999,"commission":300,"note":""},{"id":"p-020","category":"vivo V Series","model":"V70 FE 12/256","price":16999,"commission":300,"note":""},{"id":"p-021","category":"vivo V Series","model":"V70 FE 8/256","price":12999,"commission":260,"note":""},{"id":"p-022","category":"vivo V Series","model":"V60 5G 12/512","price":17999,"commission":420,"note":""},{"id":"p-023","category":"vivo V Series","model":"V60 12/256","price":15999,"commission":375,"note":""},{"id":"p-024","category":"vivo V Series","model":"V50 5G 12/512","price":16999,"commission":420,"note":""},{"id":"p-025","category":"vivo V Series","model":"V50 5G 12/256","price":14999,"commission":375,"note":""},{"id":"p-026","category":"vivo V Series","model":"V80 Lite 5G 6/256","price":15999,"commission":320,"note":""},{"id":"p-027","category":"vivo V Series","model":"V80 Lite 5G 6/128","price":13999,"commission":250,"note":""},{"id":"p-028","category":"vivo V Series","model":"V60 Lite 5G 12/256","price":11999,"commission":300,"note":""},{"id":"p-029","category":"vivo V Series","model":"V60 Lite 5G 8/256","price":9999,"commission":200,"note":""},{"id":"p-030","category":"vivo V Series","model":"V60 Lite 5G 8/128","price":10999,"commission":200,"note":""},{"id":"p-031","category":"vivo V Series","model":"V50 Lite 5G 12/512","price":11999,"commission":300,"note":""},{"id":"p-032","category":"vivo V Series","model":"V50 Lite 5G 8/256","price":9999,"commission":200,"note":""},{"id":"p-033","category":"vivo Y Series","model":"Y200 5G 12/512","price":11999,"commission":260,"note":""},{"id":"p-034","category":"vivo Y Series","model":"Y200 5G 8/256","price":9999,"commission":220,"note":""},{"id":"p-035","category":"vivo Y Series","model":"Y31d 6/256","price":9499,"commission":200,"note":""},{"id":"p-036","category":"vivo Y Series","model":"Y31d 6/128","price":7999,"commission":160,"note":""},{"id":"p-037","category":"vivo Y Series","model":"Y39 5G 8/256","price":7999,"commission":150,"note":""},{"id":"p-038","category":"vivo Y Series","model":"Y36 5G 8/256","price":7999,"commission":170,"note":""},{"id":"p-039","category":"vivo Y Series","model":"Y31 5G 8/256","price":8499,"commission":170,"note":""},{"id":"p-040","category":"vivo Y Series","model":"Y31 5G 8/128","price":7499,"commission":150,"note":""},{"id":"p-041","category":"vivo Y Series","model":"Y29 8/256","price":6999,"commission":130,"note":""},{"id":"p-042","category":"vivo Y Series","model":"Y29 8/128","price":5999,"commission":100,"note":""},{"id":"p-043","category":"vivo Y Series","model":"Y21d 6/256","price":5999,"commission":120,"note":""},{"id":"p-044","category":"vivo Y Series","model":"Y21d 6/128","price":6999,"commission":100,"note":""},{"id":"p-045","category":"vivo Y Series","model":"Y21d 4/128","price":4999,"commission":75,"note":""},{"id":"p-046","category":"vivo Y Series","model":"Y19s 6/128","price":4399,"commission":75,"note":""},{"id":"p-047","category":"vivo Y Series","model":"Y19s 4/128","price":3799,"commission":60,"note":""},{"id":"p-048","category":"vivo Y Series","model":"Y19s 4/64","price":3499,"commission":45,"note":""},{"id":"p-049","category":"vivo Y Series","model":"Y11d 4/128","price":6299,"commission":80,"note":""},{"id":"p-050","category":"vivo Y Series","model":"Y05 4/128","price":5799,"commission":70,"note":""},{"id":"p-051","category":"vivo Y Series","model":"Y05 4/64","price":5499,"commission":50,"note":""},{"id":"p-052","category":"vivo Y Series","model":"Y04s 4/128","price":3599,"commission":50,"note":""},{"id":"p-053","category":"vivo Y Series","model":"Y04s 4/64","price":3099,"commission":30,"note":""},{"id":"p-054","category":"vivo Y Series","model":"Y04 4/128","price":3499,"commission":50,"note":""},{"id":"p-055","category":"vivo Y Series","model":"Y04 4/64","price":2999,"commission":30,"note":""},{"id":"p-056","category":"iQOO Series","model":"iQOO 15 16/512","price":32900,"commission":750,"note":""},{"id":"p-057","category":"iQOO Series","model":"iQOO 15 12/256","price":32900,"commission":600,"note":""},{"id":"p-058","category":"iQOO Series","model":"iQOO 13 16/512","price":28900,"commission":620,"note":""},{"id":"p-059","category":"iQOO Series","model":"iQOO 13 12/256","price":25900,"commission":560,"note":""},{"id":"p-060","category":"iQOO Series","model":"iQOO 12 16/512","price":25990,"commission":560,"note":""},{"id":"p-061","category":"iQOO Series","model":"iQOO 15R 12/512","price":29900,"commission":580,"note":""},{"id":"p-062","category":"iQOO Series","model":"iQOO 15R 12/256","price":25900,"commission":450,"note":""},{"id":"p-063","category":"iQOO Series","model":"iQOO Neo 10 16/256","price":16900,"commission":450,"note":""},{"id":"p-064","category":"iQOO Series","model":"iQOO Neo 10 12/256","price":14900,"commission":400,"note":""},{"id":"p-065","category":"iQOO Series","model":"iQOO Neo 10 8/256","price":14490,"commission":400,"note":"คอมช่องรวม 400 บาท; ช่องค่าคอมระบุ 360 บาท — โปรดตรวจสอบ"},{"id":"p-066","category":"iQOO Series","model":"iQOO Z11 5G 12/256","price":17900,"commission":320,"note":""},{"id":"p-067","category":"iQOO Series","model":"iQOO Z11 5G 8/256","price":15900,"commission":280,"note":""},{"id":"p-068","category":"iQOO Series","model":"iQOO Z11x 5G 8/256","price":11900,"commission":180,"note":""},{"id":"p-069","category":"iQOO Series","model":"iQOO Z11x 5G 8/128","price":9900,"commission":150,"note":""},{"id":"p-070","category":"iQOO Series","model":"iQOO Z10 5G 12/256","price":9900,"commission":220,"note":""},{"id":"p-071","category":"อุปกรณ์เสริม vivo","model":"TWS Air","price":1999,"commission":10,"note":""},{"id":"p-072","category":"อุปกรณ์เสริม vivo","model":"Watch GT","price":3999,"commission":0,"note":""},{"id":"p-073","category":"อุปกรณ์เสริม vivo","model":"Watch 3 White","price":6999,"commission":180,"note":""},{"id":"p-074","category":"อุปกรณ์เสริม vivo","model":"Watch 3 Black","price":6499,"commission":160,"note":""},{"id":"p-075","category":"อุปกรณ์เสริม vivo","model":"ZEISS 2.35x Telephoto Extender","price":5999,"commission":150,"note":""},{"id":"p-076","category":"อุปกรณ์เสริม vivo","model":"ZEISS Telephoto Extender Gen 2 Ultra + Case Kit","price":8499,"commission":150,"note":""},{"id":"p-077","category":"iMoo","model":"iMoo Z1","price":3999,"commission":100,"note":""},{"id":"p-078","category":"iMoo","model":"iMoo Z3","price":5499,"commission":150,"note":""},{"id":"p-079","category":"iMoo","model":"iMoo Z6","price":7499,"commission":300,"note":""},{"id":"p-080","category":"iMoo","model":"iMoo Z7 + Z7 Spiderman","price":6999,"commission":200,"note":""},{"id":"p-081","category":"iMoo","model":"iMoo Z7 Frozen","price":7999,"commission":300,"note":""},{"id":"p-082","category":"iMoo","model":"iMoo X10","price":10900,"commission":400,"note":""}];
       let catalog;
@@ -1057,7 +1039,7 @@
         return Number.isFinite(stored)?stored:0;
       };
       function findCatalogProduct(r){
-        // A stable product ID survives edits/renames in the web UI and v12 Excel.
+        // A stable product ID survives catalog updates imported from Excel.
         const byId=r.productId?catalog.find(p=>p.id===r.productId):null;
         if(byId)return byId;
         // Backward compatibility with v11 / the original 5-column Excel format.
@@ -1128,10 +1110,10 @@
         for(const name of names){
           const items=grouped.get(name);
           const collapsed=seriesCollapsed.has(name);
-          const rows=items.map(p=>`<button class="catalog-mini-row" type="button" data-edit="${escapeHtml(p.id)}" title="${escapeHtml(p.model)} • ราคา ${money(p.price)} • คอม ${money(p.commission)}${p.note?' • '+escapeHtml(p.note):''}" aria-label="แก้ไข ${escapeHtml(p.model)} ราคา ${money(p.price)} ค่าคอม ${money(p.commission)}">
+          const rows=items.map(p=>`<div class="catalog-mini-row" title="${escapeHtml(p.model)} • ราคา ${money(p.price)} • คอม ${money(p.commission)}${p.note?' • '+escapeHtml(p.note):''}">
                <span class="catalog-mini-name">${escapeHtml(shortCatalogName(p.model))}${p.note?'<span class="catalog-mini-note" aria-hidden="true">●</span>':''}</span>
                <span class="catalog-mini-numbers"><span class="catalog-mini-price">${money(p.price)}</span><span class="catalog-mini-commission">${money(p.commission)}</span></span>
-            </button>`).join('');
+            </div>`).join('');
           const markup=`<section class="catalog-series" data-tone="${seriesTone(name)}" aria-label="${escapeHtml(name)}">
             <button class="catalog-series-heading" data-series-toggle="${escapeHtml(name)}" type="button" aria-expanded="${String(!collapsed)}"><span class="catalog-series-name">${escapeHtml(seriesLabel(name))}</span><span class="catalog-series-meta"><span class="catalog-series-count">${nf.format(items.length)}</span><span class="catalog-series-chevron" aria-hidden="true">⌄</span></span></button>
             <div class="catalog-series-rows" ${collapsed?'hidden':''}>${rows}</div>
@@ -1152,46 +1134,6 @@
       window.addEventListener('resize',()=>{const lanes=catalogLaneCount();if(lanes!==catalogViewportLanes){catalogViewportLanes=lanes;if(el('view-catalog').classList.contains('active'))renderCatalog()}});
       el('catalog-search').addEventListener('input',()=>{seriesCollapsed.clear();renderCatalog()});
       el('catalog-category').addEventListener('change',()=>{seriesCollapsed.clear();renderCatalog()});
-      let editingCatalogId=null;
-      const productDialog=el('product-dialog');
-      function openProductDialog(id=null){
-        editingCatalogId=id;
-        const product=id?catalog.find(p=>p.id===id):null;
-        el('product-dialog-title').textContent=product?'แก้ไขสินค้า':'เพิ่มสินค้า';
-        el('product-delete').hidden=!product;
-        el('product-category').value=product?.category||'vivo V Series';
-        el('product-model').value=product?.model||'';
-        el('product-price').value=product?.price??'';
-        el('product-commission').value=product?.commission??'';
-        el('product-note').value=product?.note||'';
-        productDialog.hidden=false;el('product-model').focus();
-      }
-      function closeProductDialog(){productDialog.hidden=true;editingCatalogId=null}
-      el('catalog-add').addEventListener('click',()=>openProductDialog());
-      el('product-cancel').addEventListener('click',closeProductDialog);
-      el('product-cancel-icon').addEventListener('click',closeProductDialog);
-      productDialog.addEventListener('click',e=>{if(e.target===productDialog)closeProductDialog()});
-      el('product-form').addEventListener('submit',e=>{
-        e.preventDefault();
-        const category=el('product-category').value.trim();
-        const model=el('product-model').value.trim();
-        const price=Number(el('product-price').value);
-        const commission=Number(el('product-commission').value);
-        const note=el('product-note').value.trim();
-        if(!category||!model||![price,commission].every(v=>Number.isSafeInteger(v)&&v>=0&&v<=999999999))return toast('ตรวจสอบหมวดสินค้า ราคา และค่าคอม');
-        if(catalog.some(p=>cleanKey(p.model)===cleanKey(model)&&p.id!==editingCatalogId))return toast('ชื่อรุ่นนี้มีอยู่ในตารางแล้ว');
-        const next={id:editingCatalogId||catalogId(),category,model,price,commission,note};
-        if(editingCatalogId){catalog=catalog.map(p=>p.id===editingCatalogId?next:p)}else catalog.push(next);
-        saveCatalog();closeProductDialog();renderCatalog();refreshLinkedViews();toast('บันทึกสินค้าแล้ว');
-      });
-      function removeCatalogProduct(id){
-        const p=catalog.find(x=>x.id===id);if(!p)return;
-        if(!confirm('ลบรุ่น '+p.model+' ออกจากตารางค่าคอม?\nรายการขายเดิมจะยังอยู่ แต่จะใช้ราคาและค่าคอม ณ วันที่ขายแทน'))return;
-        catalog=catalog.filter(x=>x.id!==p.id);
-        saveCatalog();closeProductDialog();renderCatalog();refreshLinkedViews();
-        toast('ลบสินค้าแล้ว • รายการที่ไม่พบรุ่นใช้ราคา/ค่าคอมเดิม');
-      }
-      el('product-delete').addEventListener('click',()=>{if(editingCatalogId)removeCatalogProduct(editingCatalogId)});
       el('catalog-rows').addEventListener('click',e=>{
         const series=e.target.closest('[data-series-toggle]');
         if(series){
@@ -1199,7 +1141,6 @@
           if(seriesCollapsed.has(name))seriesCollapsed.delete(name);else seriesCollapsed.add(name);
           renderCatalog();return;
         }
-        const edit=e.target.closest('[data-edit]');if(edit){openProductDialog(edit.dataset.edit);return}
       });
       // Offline XLSX writer/parser. Uses a valid ZIP workbook for export and native
       // DecompressionStream for the DEFLATE compression used by Microsoft Excel.
@@ -1258,15 +1199,15 @@
         const grid=[HEADERS,...catalog.map(p=>[p.category,p.model,p.price,p.commission,p.note||'',p.id])];
         return buildXlsx(grid,'Commission',[22,44,18,17,60,37],[2,3]);
       }
-      // Spreadsheet-facing schema contains no internal IDs or commission.
-      // Old sheets with an ID/SKU column remain importable for compatibility.
-      const SALES_HEADERS=['วันที่ขาย','รุ่นสินค้า','จำนวน','ราคาขาย/เครื่อง','ช่องทางชำระ'];
+      // Export one row per device so the sales sheet needs no quantity column.
+      // Old sheets with quantity, ID, or SKU columns remain importable.
+      const SALES_HEADERS=['วันที่ขาย','รุ่นสินค้า','ราคาขาย/เครื่อง','ช่องทางชำระ'];
       function salesWorkbookXlsx(list){
-        const grid=[SALES_HEADERS,...list.map(r=>[
-          String(r.date||'').slice(0,10),r.model,Number(r.qty||1),
+        const grid=[SALES_HEADERS,...list.flatMap(r=>Array.from({length:Number(r.qty||1)},()=>[
+          String(r.date||'').slice(0,10),r.model,
           historicalPrice(r)/Number(r.qty||1),r.payment||''
-        ])];
-        return buildXlsx(grid,'Sales',[18,44,13,22,21],[2,3],[0]);
+        ]))];
+        return buildXlsx(grid,'Sales',[18,44,22,21],[2],[0]);
       }
       function downloadFile(blob,filename){
         const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=filename;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1500);
@@ -1402,7 +1343,7 @@
         if(!pendingCatalogImport)return;
         catalog=pendingCatalogImport;saveCatalog();closeImport();renderCatalog();refreshLinkedViews();toast('นำเข้า '+nf.format(catalog.length)+' สินค้า • คำนวณราคาและค่าคอมใหม่แล้ว');
       });
-      document.addEventListener('keydown',e=>{if(e.key==='Escape'){if(!productDialog.hidden)closeProductDialog();if(!importDialog.hidden)closeImport();if(!salesImportDialog.hidden)closeSalesImport()}});
+      document.addEventListener('keydown',e=>{if(e.key==='Escape'){if(!importDialog.hidden)closeImport();if(!salesImportDialog.hidden)closeSalesImport()}});
 
       function parseSaleDate(value, rowNo){
         const raw=String(value??'').trim();

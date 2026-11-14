@@ -1,4 +1,4 @@
-const CACHE_NAME = 'payment-report-pwa-1';
+const CACHE_NAME = 'payment-report-pwa-2';
 const APP_FILES = [
   './',
   './index.html',
