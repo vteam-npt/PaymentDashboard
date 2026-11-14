@@ -21,7 +21,7 @@
     })();
   </script>
   <meta name="description" content="SalesFlow สำหรับบันทึกยอดขายและจัดการตารางค่าคอมมิชชัน">
-  <title>SalesFlow | Sales Workspace</title>
+  <title>SalesFlow | รายการขาย</title>
   <style>
     :root{color-scheme:light;--text:#5d6b86;--muted:#97a1b6;--line:rgba(255,255,255,.34);--blue:#486fbd;--soft:#edf2ff;--green:#70988d;--panel:rgba(246,247,253,.63);--shadow:0 22px 62px rgba(58,88,147,.10)}
     *{box-sizing:border-box}
@@ -244,9 +244,6 @@
       .delete-selection-top{padding:10px 8px}
       .delete-action-inner{gap:6px}.delete-cancel,.delete-confirm-open{padding:0 9px}
     }
-    .date-assumption{margin:0 10px 9px;padding:9px 12px;font-size:11px;line-height:1.5;border-radius:11px;color:#6f7f9d;background:rgba(239,245,255,.46);border:1px solid rgba(255,255,255,.55)}
-    .date-assumption span{color:#8998b2}
-    @media(max-width:365px){.date-assumption{font-size:10px;margin-left:6px;margin-right:6px;padding:8px}}
 
     /* v11: Compact, editable commission catalog */
     .catalog-heading{padding-bottom:10px}
@@ -480,7 +477,6 @@
     .toolbar .export{min-height:41px;border-radius:11px;padding:0 10px;gap:6px;box-shadow:none;color:#667b9e;font-weight:650;font-size:11px}
     .toolbar .export svg{width:16px;height:16px}
     .toolbar .delete-toggle{width:41px;height:41px;border-radius:11px;box-shadow:none}
-    .date-assumption{display:inline-flex;align-items:center;margin:0 9px 9px;padding:5px 9px;border:0;background:rgba(229,235,247,.66);color:#7183a1;font-size:10px;line-height:1.25;border-radius:7px}
     .footnote{display:none}
     .table-head{min-height:35px;border-radius:9px;background:rgba(221,230,247,.54);color:#8291aa;font-size:11px;font-weight:650}
     .sale-row{min-height:62px;border-bottom:1px solid rgba(137,163,205,.13);background:transparent}
@@ -590,7 +586,6 @@
       .bottom-nav .nav-btn{font-size:10px}
       .bottom-nav .nav-btn svg{width:22px;height:22px}
       .date-group{margin:9px 3px 4px}
-      .date-assumption{margin:0 6px 8px}
       .table-head{min-height:33px}
       .sale-row{min-height:61px}
       .catalog-toolbar .catalog-action{min-height:34px}
@@ -611,7 +606,7 @@
     /* Accessibility pass: stronger foreground contrast on translucent surfaces. */
     :root{--text:#354b69;--muted:#677d9c;--panel:rgba(248,250,255,.86)}
     .section-head h1,.history-heading h1{color:#344d70}
-    .heading-side-note,.history-total,.date-assumption,.stat-label,.target-field{color:#536b8b}
+    .heading-side-note,.history-total,.stat-label,.target-field{color:#536b8b}
     .toolbar .search input,.composer-search-row input,.catalog-filters input,.catalog-filters select{color:#394e6e}
     .toolbar .search input::placeholder,.composer-search-row input::placeholder,.catalog-filters input::placeholder{color:#7183a1;opacity:1}
     .toolbar .export,.catalog-action:not(.catalog-add){color:#4a6285}
@@ -696,7 +691,7 @@
   <main class="app">
     <section class="glass-panel">
       <div class="view active" id="view-history">
-        <header class="section-head history-heading"><h1>รายการขาย</h1><span id="history-total-count" class="history-total">19 เครื่อง</span></header>
+        <header class="section-head history-heading"><h1>รายการขาย</h1><span id="history-total-count" class="history-total">0 เครื่อง</span></header>
         <div class="toolbar">
           <label class="search" aria-label="ค้นหารายการขาย">
             <svg width="27" height="27" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="10.8" cy="10.8" r="7.7"/><path d="m16.5 16.5 5 5"/></svg>
@@ -719,12 +714,11 @@
           <div><strong>เลือกรายการเพื่อลบ</strong></div>
           <label class="select-all-label"><input type="checkbox" id="select-all-visible"><span>เลือกทั้งหมด</span></label>
         </div>
-        <p class="date-assumption">ข้อมูลตัวอย่าง · วันที่ขายสมมติ</p>
         <div class="sale-table" id="sale-table" role="table" aria-label="ประวัติรายการขาย">
           <div class="table-head" role="row"><span class="head-model" role="columnheader">สินค้า</span><span class="head-payment" role="columnheader">ช่องทางชำระ</span><span class="head-commission" role="columnheader">คอมรวม</span></div>
           <div id="sales-rows" role="rowgroup"></div>
         </div>
-        <p class="footnote" id="history-footnote">วันที่ของข้อมูลตัวอย่างเป็นวันสมมติ</p>
+        <p class="footnote" id="history-footnote">ข้อมูลรายการขายเก็บในเบราว์เซอร์ของเครื่องนี้</p>
       </div>
 
       <div class="view" id="view-dashboard">
@@ -768,7 +762,7 @@
         </div>
         <div class="catalog-summary"><div><b id="catalog-count">0 รุ่น</b><span class="catalog-hint">บาท/เครื่อง</span></div><button type="button" id="catalog-toggle-all" class="catalog-collapse-all">ย่อหมวดทั้งหมด</button></div>
         <div id="catalog-rows" class="catalog-rows" aria-label="ตารางค่าคอมแยกตามซีรีส์"></div>
-        <details class="catalog-policy"><summary>การคำนวณราคาและค่าคอม</summary><p>แก้ราคาและค่าคอมแล้วตัวเลขปัจจุบันในรายการขายและภาพรวมจะอัปเดตทันที ส่วนค่าที่บันทึก ณ วันขายยังเก็บไว้ หากลบรุ่นจากตาราง ระบบจะใช้ข้อมูลเดิมของรายการนั้น และควรเก็บรหัสสินค้าเดิมไว้เมื่อแก้ไฟล์ Excel</p></details>
+        <details class="catalog-policy"><summary>การคำนวณราคาและค่าคอม</summary><p>ราคาและค่าคอมปัจจุบันอ้างอิงตารางสินค้า ค่าที่บันทึก ณ วันขายยังเก็บไว้ หากลบสินค้า ระบบจะใช้ค่า ณ วันขาย และหากแก้ไฟล์ Excel ควรเก็บรหัสสินค้าเดิมไว้</p></details>
       </div>
     </section>
   </main>
@@ -811,7 +805,7 @@
       <p id="sales-import-details"></p>
       <div id="sales-import-matches" class="sales-match-panel" hidden>
         <p class="sales-match-heading">ตรวจสอบชื่อรุ่นที่จับคู่ไม่ตรง</p>
-        <p class="sales-match-help">เลือกรุ่นที่ถูกต้องจากตารางค่าคอมให้ครบก่อนนำเข้า ระบบไม่เดาสุ่มและจะใช้ชื่อมาตรฐานจากตารางโดยอัตโนมัติ</p>
+        <p class="sales-match-help">เลือกรุ่นจากตารางค่าคอมให้ตรงกับแต่ละรายการก่อนนำเข้า</p>
         <div id="sales-import-match-list"></div>
       </div>
       <p id="sales-import-match-count" class="sales-import-notice" hidden></p>
@@ -834,7 +828,7 @@
     <div class="catalog-import-confirm" role="alertdialog" aria-modal="true" aria-labelledby="import-title" aria-describedby="import-details">
       <h2 id="import-title">ยืนยันนำเข้าตารางค่าคอม?</h2>
       <p id="import-details"></p>
-      <p class="catalog-import-warning">การนำเข้าจะแทนที่ตารางสินค้าทั้งหมด และอัปเดตยอดปัจจุบันทันที ควรสำรองไฟล์ก่อน และคงรหัสสินค้าเดิมเมื่อแก้ไขใน Excel</p>
+      <p class="catalog-import-warning">การนำเข้าจะแทนที่ตารางสินค้าทั้งหมด ควรส่งออกไฟล์สำรองก่อน และคงรหัสสินค้าเดิมเมื่อแก้ไขใน Excel</p>
       <div class="catalog-form-actions"><button class="catalog-action" type="button" id="import-cancel">ยกเลิก</button><button class="catalog-action catalog-add" type="button" id="import-confirm">แทนที่ตารางสินค้า</button></div>
     </div>
   </div>
@@ -842,49 +836,25 @@
   <script>
     (() => {
       'use strict';
-      // Default sample sales and commission rates; customize freely for any retailer.
-      // Sale days below are fictional and spread evenly over 1–12 Nov 2026. No sale times are stored.
-      // Neutral keys and one-time migration keep existing data from earlier deployments.
+      // Keep existing user data while removing the former built-in sample sales once.
       const LEGACY_CODE=String.fromCharCode(106,109,49,51,56,51);
       const LEGACY_SALES_KEY='sales-flow-'+LEGACY_CODE+'-sales-19-v1';
       const LEGACY_CATALOG_KEY='sales-flow-'+LEGACY_CODE+'-product-catalog-v1';
-      const LEGACY_IMPORT_FLAG='sales-flow-'+LEGACY_CODE+'-sales-imported';
       const KEY='sales-flow-sales-v2';
-      const IMPORT_FLAG='sales-flow-sales-imported-v2';
+      const SAMPLE_CLEANUP_KEY='sales-flow-sample-sales-removed-v1';
+      const sampleSaleIds=new Set([
+        'sale-2026-11-01-1','sale-2026-11-01-2','sale-2026-11-02-1',
+        'sale-2026-11-03-1','sale-2026-11-03-2','sale-2026-11-04-1',
+        'sale-2026-11-05-1','sale-2026-11-05-2','sale-2026-11-06-1',
+        'sale-2026-11-06-2','sale-2026-11-07-1','sale-2026-11-08-1',
+        'sale-2026-11-08-2','sale-2026-11-09-1','sale-2026-11-10-1',
+        'sale-2026-11-10-2','sale-2026-11-11-1','sale-2026-11-12-1',
+        'sale-2026-11-12-2'
+      ]);
       const genericSaleId=value=>{
         const text=String(value??'');
         return text.startsWith(LEGACY_CODE+'-')?'sale-'+text.slice(LEGACY_CODE.length+1):text;
       };
-      const products=[
-        {"name":"Y11d 4/128","price":6299,"commission":80},
-        {"name":"V80 Lite 5G 6/128","price":13999,"commission":250},
-        {"name":"V80 Lite 5G 6/256","price":15999,"commission":320},
-        {"name":"V80 8/256","price":24999,"commission":475},
-        {"name":"V80 8/128","price":21999,"commission":375},
-        {"name":"V70 8/256","price":17999,"commission":300},
-        {"name":"V70 FE 12/256","price":16999,"commission":300},
-        {"name":"Y05 4/128","price":5799,"commission":70},
-        {"name":"iQOO Z11 5G 12/256","price":17900,"commission":320}
-      ];
-      // Assumed sale dates only, no per-transaction time.
-      const dailySales=[
-        ['2026-11-01',[0,1]],
-        ['2026-11-02',[3]],
-        ['2026-11-03',[0,6]],
-        ['2026-11-04',[1]],
-        ['2026-11-05',[0,7]],
-        ['2026-11-06',[3,0]],
-        ['2026-11-07',[2]],
-        ['2026-11-08',[4,0]],
-        ['2026-11-09',[5]],
-        ['2026-11-10',[1,0]],
-        ['2026-11-11',[8]],
-        ['2026-11-12',[3,1]]
-      ];
-      const seed=dailySales.flatMap(([day,sales])=>sales.map((index,i)=>({
-        id:`sale-${day}-${i+1}`,model:products[index].name,price:products[index].price,
-        payment:null,commission:products[index].commission,qty:1,date:day
-      })));
       const el=id=>document.getElementById(id);
       const nf=new Intl.NumberFormat('th-TH',{maximumFractionDigits:0});
       let rows;
@@ -892,12 +862,12 @@
         const existing=localStorage.getItem(KEY);
         const raw=existing!==null?existing:localStorage.getItem(LEGACY_SALES_KEY);
         const stored=raw===null?null:JSON.parse(raw);
-        rows=Array.isArray(stored)?stored.map(({status,...r})=>({...r,id:genericSaleId(r.id),date:String(r.date||'').slice(0,10)})):seed.slice();
+        rows=Array.isArray(stored)?stored.map(({status,...r})=>({...r,id:genericSaleId(r.id),date:String(r.date||'').slice(0,10)})):[];
+        const needsSampleCleanup=localStorage.getItem(SAMPLE_CLEANUP_KEY)!=='true';
+        if(needsSampleCleanup)rows=rows.filter(r=>!sampleSaleIds.has(String(r.id)));
         localStorage.setItem(KEY,JSON.stringify(rows));
-        if(localStorage.getItem(IMPORT_FLAG)===null&&localStorage.getItem(LEGACY_IMPORT_FLAG)==='true'){
-          localStorage.setItem(IMPORT_FLAG,'true');
-        }
-      } catch {rows=seed.slice()}
+        if(needsSampleCleanup)localStorage.setItem(SAMPLE_CLEANUP_KEY,'true');
+      } catch {rows=[]}
       let toastTimeout;
       let deleteMode=false;
       const selectedIds=new Set();
@@ -929,12 +899,8 @@
       function renderSales(){
         const headCount=el('history-total-count');
         if(headCount)headCount.textContent=nf.format(rows.reduce((n,r)=>n+Number(r.qty||1),0))+' เครื่อง';
-        if(localStorage.getItem(IMPORT_FLAG)==='true'){
-          el('history-footnote').textContent='รายการขายที่บันทึกในเว็บหรือ Excel • วันที่แสดงเฉพาะวัน/เดือน/ปี • ค่าคอมอ้างอิงจากตารางสินค้า';
-          const note=document.querySelector('.date-assumption');if(note)note.textContent='รายการขาย '+nf.format(rows.reduce((n,r)=>n+Number(r.qty||1),0))+' เครื่อง';
-        }
         const list=filtered().map((r,i)=>({r,i})).sort((a,b)=>String(b.r.date||'').localeCompare(String(a.r.date||''))||a.i-b.i);
-        if(!list.length){el('sales-rows').innerHTML='<div class="empty">ไม่พบรายการขายที่ค้นหา</div>';return;}
+        if(!list.length){el('sales-rows').innerHTML='<div class="empty">'+(rows.length?'ไม่พบรายการที่ค้นหา':'ยังไม่มีรายการขาย')+'</div>';return;}
         const groups=new Map();
         list.forEach(({r})=>{const key=String(r.date||'').slice(0,10)||'ไม่ระบุวันที่';if(!groups.has(key))groups.set(key,[]);groups.get(key).push(r)});
         const calIcon='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 3v4m10-4v4M3 10h18"/></svg>';
@@ -1258,7 +1224,7 @@
         if(catalog.some(p=>cleanKey(p.model)===cleanKey(model)&&p.id!==editingCatalogId))return toast('ชื่อรุ่นนี้มีอยู่ในตารางแล้ว');
         const next={id:editingCatalogId||catalogId(),category,model,price,commission,note};
         if(editingCatalogId){catalog=catalog.map(p=>p.id===editingCatalogId?next:p)}else catalog.push(next);
-        saveCatalog();closeProductDialog();renderCatalog();refreshLinkedViews();toast('บันทึกแล้ว • ราคาและค่าคอมอัปเดตทันที');
+        saveCatalog();closeProductDialog();renderCatalog();refreshLinkedViews();toast('บันทึกสินค้าแล้ว');
       });
       function removeCatalogProduct(id){
         const p=catalog.find(x=>x.id===id);if(!p)return;
@@ -1694,9 +1660,8 @@
         const result=mappedSalesImport();
         if(!result)return toast('กรุณาจับคู่รุ่นที่ไม่ตรงตารางให้ครบก่อนนำเข้า');
         rows=result;save();
-        try{localStorage.setItem(IMPORT_FLAG,'true')}catch{}
         closeSalesImport();setDeleteMode(false);refreshLinkedViews();
-        toast('นำเข้ารายการขายแล้ว • จับคู่สินค้าและคำนวณค่าคอมจากตาราง');
+        toast('นำเข้ารายการขายแล้ว');
       });
 
       // Standalone composer based on the repository's SaleComposer expansion and item counters.
@@ -1839,11 +1804,8 @@
         });
         rows=[...entries,...rows];save();
         drafts=[];saveDrafts();
-        // Mark the history as user-provided, not the built-in example set.
-        try{localStorage.setItem(IMPORT_FLAG,'true')}catch{}
-        el('history-footnote').textContent='รายการขายที่บันทึกผ่านเว็บหรือ Excel • วันที่แสดงเฉพาะวัน/เดือน/ปี • ค่าคอมอ้างอิงตารางสินค้า';
         closeComposeSummary();renderComposer();refreshLinkedViews();setView('history');
-        toast('บันทึกยอดขาย '+nf.format(entries.length)+' เครื่องเรียบร้อย');
+        toast('บันทึกยอดขาย '+nf.format(entries.length)+' เครื่องแล้ว');
       });
       document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!composeOverlay.hidden)closeComposeSummary()});
       renderSales();
