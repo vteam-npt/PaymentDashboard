@@ -1,6 +1,6 @@
 {
-  "name": "SalesFlow Payment Dashboard",
-  "short_name": "SalesFlow",
+  "name": "PaymentReport",
+  "short_name": "PaymentReport",
   "description": "บันทึกยอดขายและจัดการตารางค่าคอมมิชชัน",
   "start_url": "./",
   "scope": "./",
