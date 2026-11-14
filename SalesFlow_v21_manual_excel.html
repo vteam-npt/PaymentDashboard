@@ -10,6 +10,16 @@
   <link rel="manifest" href="./manifest.webmanifest">
   <link rel="icon" href="./icon-192.png" sizes="192x192" type="image/png">
   <link rel="apple-touch-icon" href="./icon-192.png">
+  <script>
+    (() => {
+      const ua = navigator.userAgent;
+      const mobile = /Android|iPhone|iPad|iPod/i.test(ua) ||
+        (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+      const installed = window.matchMedia('(display-mode: standalone)').matches ||
+        navigator.standalone === true;
+      if (mobile && !installed) document.documentElement.classList.add('install-required');
+    })();
+  </script>
   <meta name="description" content="SalesFlow สำหรับบันทึกยอดขายและจัดการตารางค่าคอมมิชชัน">
   <title>SalesFlow | Sales Workspace</title>
   <style>
@@ -636,9 +646,53 @@
     .catalog-policy summary{color:#4d698d}
     .nav-btn{color:#5e718e}
     .nav-btn.active{color:#315da5}
+    .install-required .app,.install-required body > .bottom-nav,.install-required .catalog-overlay,.install-required .composer-overlay{display:none!important}
+    #install-gate{display:none}
+    .install-required #install-gate{display:flex}
+    .install-gate{position:fixed;inset:0;z-index:10000;overflow:auto;align-items:center;justify-content:center;padding:24px 18px calc(24px + env(safe-area-inset-bottom));background:linear-gradient(145deg,#8ca6df,#a2b7e6 55%,#9cafde);color:#344d70}
+    .install-card{width:min(100%,470px);padding:30px 25px;border:1px solid rgba(255,255,255,.8);border-radius:28px;background:rgba(250,252,255,.94);box-shadow:0 22px 62px rgba(58,88,147,.18);text-align:center}
+    .install-logo{display:block;width:84px;height:84px;margin:0 auto 18px;border-radius:22px}
+    .install-card h1{margin:0 0 10px;font-size:26px;line-height:1.25;color:#344d70}
+    .install-card p{margin:0;color:#536b8b;line-height:1.7}
+    .install-steps{margin:24px 0;text-align:left}
+    .install-steps h2{margin:0 0 12px;font-size:17px;color:#405b7f}
+    .install-steps ol{margin:0;padding-left:25px;color:#405b7f;line-height:1.8}
+    .install-steps li{padding-left:4px;margin:6px 0}
+    .install-button{width:100%;min-height:50px;border:0;border-radius:15px;background:#486fbd;color:white;font-weight:700;font-size:16px}
+    .install-button[hidden],.install-steps[hidden]{display:none}
+    .install-note{margin-top:16px!important;font-size:13px}
+    .install-status{min-height:1.5em;margin-top:12px!important;font-size:14px;font-weight:600;color:#355d9b!important}
+    @media(max-width:365px){.install-card{padding:24px 18px}.install-card h1{font-size:23px}}
   </style>
 </head>
 <body>
+  <div id="install-gate" class="install-gate" role="main" aria-labelledby="install-title">
+    <div class="install-card">
+      <img class="install-logo" src="./icon-192.png" alt="" width="84" height="84">
+      <h1 id="install-title">ติดตั้ง SalesFlow ก่อนใช้งาน</h1>
+      <p>ติดตั้งแอปลงหน้าจอหลัก แล้วเปิด SalesFlow จากไอคอนที่ติดตั้งเพื่อเข้าใช้งาน</p>
+      <section id="android-steps" class="install-steps" hidden>
+        <h2>วิธีติดตั้งบน Android</h2>
+        <ol>
+          <li>เปิดหน้านี้ด้วย Chrome</li>
+          <li>แตะปุ่ม “ติดตั้งแอป” ด้านล่าง หรือแตะเมนู ⋮ ของ Chrome แล้วเลือก “ติดตั้งแอป” หรือ “เพิ่มไปยังหน้าจอหลัก”</li>
+          <li>ยืนยันการติดตั้ง แล้วเปิด SalesFlow จากไอคอนบนหน้าจอหลัก</li>
+        </ol>
+      </section>
+      <section id="ios-steps" class="install-steps" hidden>
+        <h2>วิธีติดตั้งบน iPhone</h2>
+        <ol>
+          <li>เปิดหน้านี้ด้วย Safari</li>
+          <li>แตะปุ่มแชร์ หรือเมนูหน้าเว็บแล้วเลือก “แชร์” จากนั้นเลือก “เพิ่มไปยังหน้าจอโฮม”</li>
+          <li>เปิด “เปิดเป็นเว็บแอป” หากมีตัวเลือกนี้ แล้วแตะ “เพิ่ม”</li>
+          <li>กลับไปหน้าจอโฮม แล้วเปิด SalesFlow จากไอคอนใหม่</li>
+        </ol>
+      </section>
+      <button id="install-button" class="install-button" type="button" hidden>ติดตั้งแอป</button>
+      <p class="install-note">หากเปิดผ่าน LINE, Facebook หรือแอปอื่น ให้คัดลอกลิงก์นี้ไปเปิดใน Chrome หรือ Safari ก่อนติดตั้ง</p>
+      <p id="install-status" class="install-status" role="status" aria-live="polite"></p>
+    </div>
+  </div>
   <main class="app">
     <section class="glass-panel">
       <div class="view active" id="view-history">
@@ -1796,6 +1850,36 @@
     })();
   </script>
   <script>
+    (() => {
+      if (!document.documentElement.classList.contains('install-required')) return;
+      const ios = /iPhone|iPad|iPod/i.test(navigator.userAgent) ||
+        (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+      document.getElementById(ios ? 'ios-steps' : 'android-steps').hidden = false;
+      const button = document.getElementById('install-button');
+      const status = document.getElementById('install-status');
+      let installPrompt;
+      window.addEventListener('beforeinstallprompt', event => {
+        event.preventDefault();
+        installPrompt = event;
+        button.hidden = false;
+      });
+      button.addEventListener('click', async () => {
+        if (!installPrompt) return;
+        const prompt = installPrompt;
+        installPrompt = null;
+        button.hidden = true;
+        await prompt.prompt();
+        const choice = await prompt.userChoice;
+        if (choice.outcome !== 'accepted') status.textContent = 'ใช้เมนูของ Chrome เพื่อติดตั้งแอปได้';
+      });
+      window.addEventListener('appinstalled', () => {
+        button.hidden = true;
+        status.textContent = 'ติดตั้งสำเร็จแล้ว เปิด SalesFlow จากไอคอนบนหน้าจอหลัก';
+      });
+      window.matchMedia('(display-mode: standalone)').addEventListener('change', event => {
+        if (event.matches) window.location.reload();
+      });
+    })();
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
         navigator.serviceWorker.register('./service-worker.js').catch(console.error);

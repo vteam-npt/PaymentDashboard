@@ -1,4 +1,4 @@
-const CACHE_NAME = 'salesflow-v21-pwa-1';
+const CACHE_NAME = 'salesflow-v21-pwa-2';
 const APP_FILES = [
   './',
   './index.html',
